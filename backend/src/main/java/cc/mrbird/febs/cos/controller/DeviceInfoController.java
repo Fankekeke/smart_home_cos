@@ -3,12 +3,17 @@ package cc.mrbird.febs.cos.controller;
 
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.DeviceInfo;
+import cc.mrbird.febs.cos.entity.UserInfo;
 import cc.mrbird.febs.cos.service.IDeviceInfoService;
+import cc.mrbird.febs.cos.service.IUserInfoService;
+import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,6 +28,8 @@ public class DeviceInfoController {
 
     private final IDeviceInfoService deviceInfoService;
 
+    private final IUserInfoService userInfoService;
+
     /**
      * 分页获取设备管理信息
      *
@@ -33,6 +40,17 @@ public class DeviceInfoController {
     @GetMapping("/page")
     public R page(Page<DeviceInfo> page, DeviceInfo deviceInfo) {
         return R.ok(deviceInfoService.selectDevicePage(page, deviceInfo));
+    }
+
+    /**
+     * 根据用户获取设备在线状态
+     *
+     * @param userId 用户ID
+     * @return 结果
+     */
+    @GetMapping("/selectDeviceStatusByUser")
+    public R selectDeviceStatusByUser(Integer userId) {
+        return R.ok();
     }
 
     /**
@@ -64,6 +82,13 @@ public class DeviceInfoController {
      */
     @PostMapping
     public R save(DeviceInfo deviceInfo) {
+        // 所属用户
+        UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, deviceInfo.getUserId()));
+        if (userInfo != null) {
+            deviceInfo.setUserId(userInfo.getUserId());
+        }
+        // 创建时间
+        deviceInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
         return R.ok(deviceInfoService.save(deviceInfo));
     }
 

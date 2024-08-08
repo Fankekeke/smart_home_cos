@@ -63,9 +63,22 @@ public class DeviceInfo implements Serializable {
     private String deviceValue;
 
     /**
+     * 设备报警值
+     */
+    private String alertValue;
+
+    /**
+     * 值类型（1.整数 2.小数 2.boolean）
+     */
+    private String valueType;
+
+    /**
      * 备注
      */
     private String remark;
 
-
+    /**
+     * 所属用户
+     */
+    private Integer userId;
 }

@@ -6,6 +6,7 @@ import cc.mrbird.febs.cos.entity.DeviceHistoryInfo;
 import cc.mrbird.febs.cos.service.IDeviceHistoryInfoService;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,17 @@ public class DeviceHistoryInfoController {
     }
 
     /**
+     * 根据设备ID获取历史数据
+     *
+     * @param deviceId 设备ID
+     * @return 结果
+     */
+    @GetMapping("/selectHistoryByDeviceId")
+    public R selectHistoryByDeviceId(Integer deviceId) {
+        return R.ok(deviceHistoryInfoService.list(Wrappers.<DeviceHistoryInfo>lambdaQuery().eq(DeviceHistoryInfo::getDeviceId, deviceId)));
+    }
+
+    /**
      * 查询设备上报历史数据信息详情
      *
      * @param id 主键ID
@@ -67,6 +79,8 @@ public class DeviceHistoryInfoController {
      */
     @PostMapping
     public R save(DeviceHistoryInfo deviceHistoryInfo) {
+        // 上报时间
+        deviceHistoryInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
         return R.ok(deviceHistoryInfoService.save(deviceHistoryInfo));
     }
 
