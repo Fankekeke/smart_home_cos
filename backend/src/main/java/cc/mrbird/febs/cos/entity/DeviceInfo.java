@@ -1,0 +1,71 @@
+package cc.mrbird.febs.cos.entity;
+
+import java.time.LocalDateTime;
+import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+
+/**
+ * 设备管理
+ *
+ * @author FanK
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
+public class DeviceInfo implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 主键ID
+     */
+    @TableId(type = IdType.AUTO)
+    private Integer id;
+
+    /**
+     * 设备编号
+     */
+    private String code;
+
+    /**
+     * 设备名称
+     */
+    private String name;
+
+    /**
+     * 设备类型
+     */
+    private Integer typeId;
+
+    /**
+     * 设备是否在线（0.否 1.是）
+     */
+    private String onlineFlag;
+
+    /**
+     * 设备创建时间
+     */
+    private String createDate;
+
+    /**
+     * 设备开关状态（0.关闭 1.开启）
+     */
+    private String openFlag;
+
+    /**
+     * 设备值
+     */
+    private String deviceValue;
+
+    /**
+     * 备注
+     */
+    private String remark;
+
+
+}
