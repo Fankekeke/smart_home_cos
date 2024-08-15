@@ -40,6 +40,17 @@ public class DeviceHistoryInfoController {
     }
 
     /**
+     * 根据设备ID获取历史记录
+     *
+     * @param deviceId 设备ID
+     * @return 结果
+     */
+    @GetMapping("/selectHistoryByDevice/{deviceId}")
+    public R selectHistoryByDevice(@PathVariable("deviceId") Integer deviceId) {
+        return R.ok(deviceHistoryInfoService.list(Wrappers.<DeviceHistoryInfo>lambdaQuery().eq(DeviceHistoryInfo::getDeviceId, deviceId)));
+    }
+
+    /**
      * 根据设备ID获取历史数据
      *
      * @param deviceId 设备ID
