@@ -2,4 +2,43 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.mrbird.febs.cos.dao.DeviceInfoMapper">
 
+    <!-- 分页获取设备管理信息 -->
+    <select id="selectDevicePage" resultType="java.util.LinkedHashMap">
+        select
+        di.id,
+        di.code,
+        di.name,
+        di.type_id,
+        di.online_flag,
+        di.create_date,
+        di.open_flag,
+        di.device_value,
+        di.remark,
+        dt.name as typeName,
+        dt.images,
+        ui.name as userName,
+        ui.images as userImages
+        from
+        device_info di
+        left join device_type dt on
+        (dt.id = di.type_id)
+        left join user_info ui on
+        (ui.id = di.user_id)
+        where
+        1 = 1
+        <if test="deviceHistoryInfo.name != null and deviceHistoryInfo.name != ''">
+            AND di.name LIKE CONCAT('%',#{deviceHistoryInfo.name},'%')
+        </if>
+        <if test="deviceHistoryInfo.typeName != null and deviceHistoryInfo.typeName != ''">
+            AND dt.name LIKE CONCAT('%',#{deviceHistoryInfo.typeName},'%')
+        </if>
+        <if test="deviceHistoryInfo.userName != null and deviceHistoryInfo.userName != ''">
+            AND ui.name LIKE CONCAT('%',#{deviceHistoryInfo.userName},'%')
+        </if>
+        <if test="deviceHistoryInfo.onlineFlag != null and deviceHistoryInfo.onlineFlag != ''">
+            AND di.online_flag = #{deviceHistoryInfo.onlineFlag}
+        </if>
+        order by
+        di.create_date desc
+    </select>
 </mapper>

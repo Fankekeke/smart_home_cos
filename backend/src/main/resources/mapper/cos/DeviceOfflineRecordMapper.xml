@@ -2,4 +2,40 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.mrbird.febs.cos.dao.DeviceOfflineRecordMapper">
 
+    <!-- 分页获取设备上下线记录信息 -->
+    <select id="selectOfflineRecordPage" resultType="java.util.LinkedHashMap">
+        select
+        dor.id,
+        dor.device_id,
+        dor.online_date,
+        dor.offline,
+        di.code as deviceCode,
+        di.name as deviceName,
+        di.remark,
+        dt.name as typeName,
+        dt.images,
+        ui.name as userName,
+        ui.images as userImages
+        from
+        device_offline_record dor
+        left join device_info di on
+        (di.id = dor.device_id)
+        left join device_type dt on
+        (dt.id = di.type_id)
+        left join user_info ui on
+        (ui.id = di.user_id)
+        where
+        1 = 1
+        <if test="deviceOfflineRecord.deviceName != null and deviceOfflineRecord.deviceName != ''">
+            AND di.name LIKE CONCAT('%',#{deviceOfflineRecord.deviceName},'%')
+        </if>
+        <if test="deviceOfflineRecord.typeName != null and deviceOfflineRecord.typeName != ''">
+            AND dt.name LIKE CONCAT('%',#{deviceOfflineRecord.typeName},'%')
+        </if>
+        <if test="deviceOfflineRecord.userName != null and deviceOfflineRecord.userName != ''">
+            AND ui.name LIKE CONCAT('%',#{deviceOfflineRecord.userName},'%')
+        </if>
+        order by
+        dor.online_date desc
+    </select>
 </mapper>

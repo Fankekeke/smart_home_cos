@@ -2,4 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.mrbird.febs.cos.dao.DeviceTypeMapper">
 
+    <!-- 分页获取设备类型信息 -->
+    <select id="selectDeviceTypePage" resultType="java.util.LinkedHashMap">
+        select
+        id,
+        code,
+        name,
+        remark,
+        create_date,
+        images
+        from
+        device_type
+        where
+        1 = 1
+        <if test="deviceType.code != null and deviceType.code != ''">
+            AND code LIKE CONCAT('%',#{deviceType.code},'%')
+        </if>
+        <if test="deviceType.name != null and deviceType.name != ''">
+            AND name LIKE CONCAT('%',#{deviceType.name},'%')
+        </if>
+        order by
+        create_date desc
+    </select>
 </mapper>
