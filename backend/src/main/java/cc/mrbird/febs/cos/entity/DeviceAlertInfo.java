@@ -4,21 +4,20 @@ import java.time.LocalDateTime;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * 设备上下线记录
+ * 设备报警配置
  *
  * @author FanK
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class DeviceOfflineRecord implements Serializable {
+public class DeviceAlertInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,31 +28,29 @@ public class DeviceOfflineRecord implements Serializable {
     private Integer id;
 
     /**
-     * 设备ID
+     * 设备类型ID
      */
-    private Integer deviceId;
+    private Integer deviceTypeId;
 
     /**
-     * 上线时间
-     */
-    private String onlineDate;
-
-    /**
-     * 下线时间
-     */
-    private String offline;
-
-    /**
-     * 类型 0.下线 1.上线
+     * 预警类型（1.持续时常报警 2.目标值越界）
      */
     private String type;
 
-    @TableField(exist = false)
-    private String deviceName;
+    /**
+     * 报警值
+     */
+    private Integer score;
 
-    @TableField(exist = false)
-    private String typeName;
+    /**
+     * 创建时间
+     */
+    private String createDate;
 
-    @TableField(exist = false)
-    private String userName;
+    /**
+     * 备注
+     */
+    private String remark;
+
+
 }

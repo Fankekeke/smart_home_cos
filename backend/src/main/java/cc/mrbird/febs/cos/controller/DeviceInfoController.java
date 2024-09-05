@@ -3,14 +3,21 @@ package cc.mrbird.febs.cos.controller;
 
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.DeviceInfo;
+import cc.mrbird.febs.cos.entity.DeviceOfflineRecord;
+import cc.mrbird.febs.cos.entity.OperateRecordInfo;
 import cc.mrbird.febs.cos.entity.UserInfo;
 import cc.mrbird.febs.cos.service.IDeviceInfoService;
+import cc.mrbird.febs.cos.service.IDeviceOfflineRecordService;
+import cc.mrbird.febs.cos.service.IOperateRecordInfoService;
 import cc.mrbird.febs.cos.service.IUserInfoService;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -29,6 +36,10 @@ public class DeviceInfoController {
     private final IDeviceInfoService deviceInfoService;
 
     private final IUserInfoService userInfoService;
+
+    private final IDeviceOfflineRecordService deviceOfflineRecordService;
+
+    private final IOperateRecordInfoService operateRecordInfoService;
 
     /**
      * 分页获取设备管理信息
@@ -80,6 +91,7 @@ public class DeviceInfoController {
      * @param deviceInfo 设备管理信息
      * @return 结果
      */
+    @Transactional(rollbackFor = Exception.class)
     @PostMapping
     public R save(DeviceInfo deviceInfo) {
         // 所属用户
@@ -89,7 +101,15 @@ public class DeviceInfoController {
         }
         // 创建时间
         deviceInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
-        return R.ok(deviceInfoService.save(deviceInfo));
+        deviceInfoService.save(deviceInfo);
+        if (StrUtil.isNotEmpty(deviceInfo.getOnlineFlag())) {
+            DeviceOfflineRecord deviceOfflineRecord = new DeviceOfflineRecord();
+            deviceOfflineRecord.setType(deviceInfo.getOnlineFlag());
+            deviceOfflineRecord.setOnlineDate(DateUtil.formatDateTime(new Date()));
+            deviceOfflineRecord.setDeviceId(deviceInfo.getId());
+            deviceOfflineRecordService.save(deviceOfflineRecord);
+        }
+        return R.ok(true);
     }
 
     /**
@@ -100,6 +120,27 @@ public class DeviceInfoController {
      */
     @PutMapping
     public R edit(DeviceInfo deviceInfo) {
+        if (StrUtil.isNotEmpty(deviceInfo.getOnlineFlag())) {
+            DeviceInfo historyDevice = deviceInfoService.getById(deviceInfo.getId());
+            if (historyDevice != null && !historyDevice.getOnlineFlag().equals(deviceInfo.getOnlineFlag())) {
+                DeviceOfflineRecord deviceOfflineRecord = new DeviceOfflineRecord();
+                deviceOfflineRecord.setType(deviceInfo.getOnlineFlag());
+                deviceOfflineRecord.setOnlineDate(DateUtil.formatDateTime(new Date()));
+                deviceOfflineRecord.setDeviceId(deviceInfo.getId());
+                deviceOfflineRecordService.save(deviceOfflineRecord);
+            }
+        }
+        // 开关记录
+        if (StrUtil.isNotEmpty(deviceInfo.getOpenFlag())) {
+            OperateRecordInfo opRecord = new OperateRecordInfo();
+            opRecord.setDeviceId(deviceInfo.getId());
+            opRecord.setOpenFlag(deviceInfo.getOpenFlag());
+            opRecord.setCreateDate(DateUtil.formatDateTime(new Date()));
+            operateRecordInfoService.save(opRecord);
+        }
+        if ("2".equals(deviceInfo.getOpenFlag())) {
+            deviceInfo.setOpenFlag("1");
+        }
         return R.ok(deviceInfoService.updateById(deviceInfo));
     }
 

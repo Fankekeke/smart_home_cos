@@ -9,6 +9,7 @@
         dor.device_id,
         dor.online_date,
         dor.offline,
+        dor.type,
         di.code as deviceCode,
         di.name as deviceName,
         di.remark,

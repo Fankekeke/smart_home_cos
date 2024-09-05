@@ -34,7 +34,7 @@ public class OperateRecordInfo implements Serializable {
     private Integer deviceId;
 
     /**
-     * 设备开关状态（0.关闭 1.开启）
+     * 设备开关状态（0.关闭 1.开启 2.重启）
      */
     private String openFlag;
 

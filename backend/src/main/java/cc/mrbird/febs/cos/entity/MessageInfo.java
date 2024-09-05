@@ -4,21 +4,20 @@ import java.time.LocalDateTime;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * 设备上下线记录
+ * 系统消息
  *
  * @author FanK
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class DeviceOfflineRecord implements Serializable {
+public class MessageInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,31 +28,24 @@ public class DeviceOfflineRecord implements Serializable {
     private Integer id;
 
     /**
-     * 设备ID
+     * 发送用户
      */
-    private Integer deviceId;
+    private Integer sendUser;
 
     /**
-     * 上线时间
+     * 消息内容
      */
-    private String onlineDate;
+    private String content;
 
     /**
-     * 下线时间
+     * 创建时间
      */
-    private String offline;
+    private String createDate;
 
     /**
-     * 类型 0.下线 1.上线
+     * 状态 0.未读 1.已读
      */
-    private String type;
+    private Integer readStatus;
 
-    @TableField(exist = false)
-    private String deviceName;
 
-    @TableField(exist = false)
-    private String typeName;
-
-    @TableField(exist = false)
-    private String userName;
 }
