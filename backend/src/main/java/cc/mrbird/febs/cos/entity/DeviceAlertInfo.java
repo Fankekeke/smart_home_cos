@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,6 +27,11 @@ public class DeviceAlertInfo implements Serializable {
      */
     @TableId(type = IdType.AUTO)
     private Integer id;
+
+    /**
+     * 设备ID
+     */
+    private Integer deviceId;
 
     /**
      * 设备类型ID
@@ -52,5 +58,12 @@ public class DeviceAlertInfo implements Serializable {
      */
     private String remark;
 
+    @TableField(exist = false)
+    private String deviceName;
 
+    @TableField(exist = false)
+    private String typeName;
+
+    @TableField(exist = false)
+    private String userName;
 }

@@ -35,7 +35,7 @@ public class DeviceAlertInfoController {
      */
     @GetMapping("/page")
     public R page(Page<DeviceAlertInfo> page, DeviceAlertInfo deviceAlertInfo) {
-        return R.ok();
+        return R.ok(deviceAlertInfoService.selectDeviceAlertPage(page, deviceAlertInfo));
     }
 
     /**

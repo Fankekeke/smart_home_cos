@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.cos.dao.DeviceAlertInfoMapper">
+
+    <!-- 分页获取设备报警配置信息 -->
+    <select id="selectDeviceAlertPage" resultType="java.util.LinkedHashMap">
+        select device_alert_info.id,
+               device_alert_info.device_id,
+               device_alert_info.device_type_id,
+               device_alert_info.`type`,
+               device_alert_info.score,
+               device_alert_info.create_date,
+               device_alert_info.remark,
+               device_info.code   as deviceCode,
+               device_info.name   as deviceName,
+               device_info.remark,
+               device_type.name   as typeName,
+               device_type.images,
+               user_info.name   as userName,
+               user_info.images as userImages
+        from device_alert_info
+                 left join device_info on (device_info.id = device_alert_info.device_id)
+                 left join device_type on (device_type.id = device_info.type_id)
+                 left join user_info on (user_info.id = device_info.user_id)
+        where 1 = 1
+        <if test="deviceAlertInfo.deviceName != null and deviceAlertInfo.deviceName != ''">
+            AND di.name LIKE CONCAT('%',#{deviceAlertInfo.deviceName},'%')
+        </if>
+        <if test="deviceAlertInfo.typeName != null and deviceAlertInfo.typeName != ''">
+            AND dt.name LIKE CONCAT('%',#{deviceAlertInfo.typeName},'%')
+        </if>
+        <if test="deviceAlertInfo.userName != null and deviceAlertInfo.userName != ''">
+            AND ui.name LIKE CONCAT('%',#{deviceAlertInfo.userName},'%')
+        </if>
+        order by device_alert_info.create_date desc
+    </select>
+</mapper>

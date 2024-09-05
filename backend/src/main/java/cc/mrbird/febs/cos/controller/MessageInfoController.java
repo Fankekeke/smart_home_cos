@@ -34,7 +34,7 @@ public class MessageInfoController {
      */
     @GetMapping("/page")
     public R page(Page<MessageInfo> page, MessageInfo messageInfo) {
-        return R.ok();
+        return R.ok(messageInfoService.selectMessagePage(page, messageInfo));
     }
 
     /**
