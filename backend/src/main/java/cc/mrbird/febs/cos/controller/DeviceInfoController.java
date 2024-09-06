@@ -54,6 +54,22 @@ public class DeviceInfoController {
     }
 
     /**
+     * 根据用户获取设备信息
+     *
+     * @param userId 用户ID
+     * @return 结果
+     */
+    @GetMapping("/selectDeviceByUserId")
+    public R selectDeviceByUserId(@RequestParam(value = "userId", required = false) Integer userId) {
+        if (userId == null) {
+            return R.ok(deviceInfoService.list());
+        }
+        // 获取用户信息
+        UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, userId));
+        return R.ok(deviceInfoService.list(Wrappers.<DeviceInfo>lambdaQuery().eq(DeviceInfo::getUserId, userInfo.getId())));
+    }
+
+    /**
      * 根据用户获取设备在线状态
      *
      * @param userId 用户ID

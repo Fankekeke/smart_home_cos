@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="show" title="修改商品" @cancel="onClose" :width="800">
+  <a-modal v-model="show" title="修改报警" @cancel="onClose" :width="800">
     <template slot="footer">
       <a-button key="back" @click="onClose">
         取消
@@ -11,52 +11,32 @@
     <a-form :form="form" layout="vertical">
       <a-row :gutter="20">
         <a-col :span="12">
-          <a-form-item label='商品名称' v-bind="formItemLayout">
-            <a-input v-decorator="[
-            'name',
-            { rules: [{ required: true, message: '请输入名称!' }] }
-            ]"/>
-          </a-form-item>
-        </a-col>
-        <a-col :span="12">
-          <a-form-item label='商品类型' v-bind="formItemLayout">
+          <a-form-item label='报警设备' v-bind="formItemLayout">
             <a-select v-decorator="[
-                  'typeId',
-                  { rules: [{ required: true, message: '请输入类型!' }] }
+                  'deviceId',
+                  { rules: [{ required: true, message: '请输入报警设备!' }] }
                   ]">
-              <a-select-option :value="item.id" v-for="(item, index) in typeList" :key="index">{{ item.name }}</a-select-option>
+              <a-select-option :value="item.id" v-for="(item, index) in deviceList" :key="index">{{ item.name }}</a-select-option>
             </a-select>
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label='型号' v-bind="formItemLayout">
-            <a-input v-decorator="[
-            'model',
-            { rules: [{ required: true, message: '请输入型号!' }] }
-            ]"/>
+          <a-form-item label='报警类型' v-bind="formItemLayout">
+            <a-radio-group
+              v-decorator="[
+            'type',
+            {rules: [{ required: true, message: '请选择报警类型' }]}
+          ]">
+              <a-radio value="1">持续时常报警</a-radio>
+              <a-radio value="2">目标值越界</a-radio>
+            </a-radio-group>
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label='单位' v-bind="formItemLayout">
-            <a-input v-decorator="[
-            'unit',
-            { rules: [{ required: true, message: '请输入单位!' }] }
-            ]"/>
-          </a-form-item>
-        </a-col>
-        <a-col :span="12">
-          <a-form-item label='采购价格' v-bind="formItemLayout">
-            <a-input-number style="width: 100%" :min="0.1" v-decorator="[
-            'purchasePrice',
-            { rules: [{ required: true, message: '请输入采购价格!' }] }
-            ]"/>
-          </a-form-item>
-        </a-col>
-        <a-col :span="12">
-          <a-form-item label='售价' v-bind="formItemLayout">
-            <a-input-number style="width: 100%" :min="0.1" v-decorator="[
-            'sellPrice',
-            { rules: [{ required: true, message: '请输入售价!' }] }
+          <a-form-item label='报警值' v-bind="formItemLayout">
+            <a-input-number style="width: 100%" :min="1" v-decorator="[
+            'score',
+            { rules: [{ required: true, message: '请输入报警值!' }] }
             ]"/>
           </a-form-item>
         </a-col>
@@ -65,28 +45,6 @@
             <a-textarea :rows="6" v-decorator="[
             'remark'
             ]"/>
-          </a-form-item>
-        </a-col>
-        <a-col :span="24">
-          <a-form-item label='图册' v-bind="formItemLayout">
-            <a-upload
-              name="avatar"
-              action="http://127.0.0.1:9527/file/fileUpload/"
-              list-type="picture-card"
-              :file-list="fileList"
-              @preview="handlePreview"
-              @change="picHandleChange"
-            >
-              <div v-if="fileList.length < 8">
-                <a-icon type="plus" />
-                <div class="ant-upload-text">
-                  Upload
-                </div>
-              </div>
-            </a-upload>
-            <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-              <img alt="example" style="width: 100%" :src="previewImage" />
-            </a-modal>
           </a-form-item>
         </a-col>
       </a-row>
@@ -109,9 +67,9 @@ const formItemLayout = {
   wrapperCol: { span: 24 }
 }
 export default {
-  name: 'commodityEdit',
+  name: 'alertEdit',
   props: {
-    commodityEditVisiable: {
+    alertEditVisiable: {
       default: false
     }
   },
@@ -121,7 +79,7 @@ export default {
     }),
     show: {
       get: function () {
-        return this.commodityEditVisiable
+        return this.alertEditVisiable
       },
       set: function () {
       }
@@ -136,16 +94,16 @@ export default {
       fileList: [],
       previewVisible: false,
       previewImage: '',
-      typeList: []
+      deviceList: []
     }
   },
   mounted() {
-    this.selectTypeList()
+    this.selectDeviceList()
   },
   methods: {
-    selectTypeList () {
-      this.$get('/cos/commodity-type/list').then((r) => {
-        this.typeList = r.data.data
+    selectDeviceList () {
+      this.$get('/cos/device-info/list').then((r) => {
+        this.deviceList = r.data.data
       })
     },
     handleCancel () {
@@ -170,18 +128,18 @@ export default {
         this.fileList = imageList
       }
     },
-    setFormValues ({...commodity}) {
-      this.rowId = commodity.id
-      let fields = ['name', 'model', 'typeId', 'unit', 'purchasePrice', 'sellPrice', 'remark']
+    setFormValues ({...alert}) {
+      this.rowId = alert.id
+      let fields = ['deviceId', 'score', 'type', 'remark']
       let obj = {}
-      Object.keys(commodity).forEach((key) => {
+      Object.keys(alert).forEach((key) => {
         if (key === 'images') {
           this.fileList = []
-          this.imagesInit(commodity['images'])
+          this.imagesInit(alert['images'])
         }
         if (fields.indexOf(key) !== -1) {
           this.form.getFieldDecorator(key)
-          obj[key] = commodity[key]
+          obj[key] = alert[key]
         }
       })
       this.form.setFieldsValue(obj)
@@ -209,7 +167,7 @@ export default {
         values.images = images.length > 0 ? images.join(',') : null
         if (!err) {
           this.loading = true
-          this.$put('/cos/commodity-info', {
+          this.$put('/cos/device-alert-info', {
             ...values
           }).then((r) => {
             this.reset()

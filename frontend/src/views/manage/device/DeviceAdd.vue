@@ -29,35 +29,27 @@
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label='型号' v-bind="formItemLayout">
-            <a-input v-decorator="[
-            'model',
-            { rules: [{ required: true, message: '请输入型号!' }] }
-            ]"/>
+          <a-form-item label='设备上下线' v-bind="formItemLayout">
+            <a-radio-group
+              v-decorator="[
+                'onlineFlag',
+                {rules: [{ required: true, message: '请选择设备上下线' }]}
+              ]">
+              <a-radio value="0">否</a-radio>
+              <a-radio value="1">是</a-radio>
+            </a-radio-group>
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label='单位' v-bind="formItemLayout">
-            <a-input v-decorator="[
-            'unit',
-            { rules: [{ required: true, message: '请输入单位!' }] }
-            ]"/>
-          </a-form-item>
-        </a-col>
-        <a-col :span="12">
-          <a-form-item label='采购价格' v-bind="formItemLayout">
-            <a-input-number style="width: 100%" :min="0.1" v-decorator="[
-            'purchasePrice',
-            { rules: [{ required: true, message: '请输入采购价格!' }] }
-            ]"/>
-          </a-form-item>
-        </a-col>
-        <a-col :span="12">
-          <a-form-item label='售价' v-bind="formItemLayout">
-            <a-input-number style="width: 100%" :min="0.1" v-decorator="[
-            'sellPrice',
-            { rules: [{ required: true, message: '请输入售价!' }] }
-            ]"/>
+          <a-form-item label='设备开关状态' v-bind="formItemLayout">
+            <a-radio-group
+              v-decorator="[
+                'openFlag',
+                {rules: [{ required: true, message: '请选择设备开关状态' }]}
+              ]">
+              <a-radio value="0">关闭</a-radio>
+              <a-radio value="1">开启</a-radio>
+            </a-radio-group>
           </a-form-item>
         </a-col>
         <a-col :span="24">
@@ -65,28 +57,6 @@
             <a-textarea :rows="6" v-decorator="[
             'remark'
             ]"/>
-          </a-form-item>
-        </a-col>
-        <a-col :span="24">
-          <a-form-item label='图册' v-bind="formItemLayout">
-            <a-upload
-              name="avatar"
-              action="http://127.0.0.1:9527/file/fileUpload/"
-              list-type="picture-card"
-              :file-list="fileList"
-              @preview="handlePreview"
-              @change="picHandleChange"
-            >
-              <div v-if="fileList.length < 8">
-                <a-icon type="plus" />
-                <div class="ant-upload-text">
-                  Upload
-                </div>
-              </div>
-            </a-upload>
-            <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-              <img alt="example" style="width: 100%" :src="previewImage" />
-            </a-modal>
           </a-form-item>
         </a-col>
       </a-row>

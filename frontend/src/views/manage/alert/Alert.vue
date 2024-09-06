@@ -7,7 +7,7 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="商品编号"
+                label="报警编号"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.code"/>
@@ -15,26 +15,26 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="商品名称"
+                label="设备名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.name"/>
+                <a-input v-model="queryParams.deviceName"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="商品型号"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.model"/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item
-                label="商品类型"
+                label="设备类型"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.typeName"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="所属用户"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-input v-model="queryParams.userName"/>
               </a-form-item>
             </a-col>
           </div>
@@ -75,39 +75,39 @@
         </template>
       </a-table>
     </div>
-    <commodity-add
-      v-if="commodityAdd.visiable"
-      @close="handlecommodityAddClose"
-      @success="handlecommodityAddSuccess"
-      :commodityAddVisiable="commodityAdd.visiable">
-    </commodity-add>
-    <commodity-edit
-      ref="commodityEdit"
-      @close="handlecommodityEditClose"
-      @success="handlecommodityEditSuccess"
-      :commodityEditVisiable="commodityEdit.visiable">
-    </commodity-edit>
+    <alert-add
+      v-if="alertAdd.visiable"
+      @close="handlealertAddClose"
+      @success="handlealertAddSuccess"
+      :alertAddVisiable="alertAdd.visiable">
+    </alert-add>
+    <alert-edit
+      ref="alertEdit"
+      @close="handlealertEditClose"
+      @success="handlealertEditSuccess"
+      :alertEditVisiable="alertEdit.visiable">
+    </alert-edit>
   </a-card>
 </template>
 
 <script>
 import RangeDate from '@/components/datetime/RangeDate'
-import commodityAdd from './AlertAdd.vue'
-import commodityEdit from './AlertEdit.vue'
+import alertAdd from './AlertAdd.vue'
+import alertEdit from './AlertEdit.vue'
 import {mapState} from 'vuex'
 import moment from 'moment'
 moment.locale('zh-cn')
 
 export default {
-  name: 'commodity',
-  components: {commodityAdd, commodityEdit, RangeDate},
+  name: 'alert',
+  components: {alertAdd, alertEdit, RangeDate},
   data () {
     return {
       advanced: false,
-      commodityAdd: {
+      alertAdd: {
         visiable: false
       },
-      commodityEdit: {
+      alertEdit: {
         visiable: false
       },
       queryParams: {},
@@ -134,54 +134,71 @@ export default {
     }),
     columns () {
       return [{
-        title: '商品编号',
-        dataIndex: 'code'
+        title: '设备编号',
+        dataIndex: 'deviceCode'
       }, {
-        title: '商品名称',
-        dataIndex: 'name'
+        title: '设备名称',
+        dataIndex: 'deviceName'
       }, {
-        title: '型号',
-        dataIndex: 'model',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '单位',
-        dataIndex: 'unit',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '采购价格',
-        dataIndex: 'purchasePrice',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text + '元'
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '售价',
-        dataIndex: 'sellPrice',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text + '元'
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '商品类型',
+        title: '设备类型',
         dataIndex: 'typeName',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '图片',
+        dataIndex: 'images',
+        customRender: (text, record, index) => {
+          if (!record.images) return <a-avatar shape="square" icon="user" />
+          return <a-popover>
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
+            </template>
+            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
+          </a-popover>
+        }
+      }, {
+        title: '所属用户',
+        dataIndex: 'userName',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '用户头像',
+        dataIndex: 'userImages',
+        customRender: (text, record, index) => {
+          if (!record.userImages) return <a-avatar shape="square" icon="user" />
+          return <a-popover>
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
+            </template>
+            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
+          </a-popover>
+        }
+      }, {
+        title: '报警类型',
+        dataIndex: 'type',
+        customRender: (text, row, index) => {
+          switch (text) {
+            case 1:
+              return <a-tag>持续时常报警</a-tag>
+            case 2:
+              return <a-tag>目标值越界</a-tag>
+            default:
+              return '- -'
+          }
+        }
+      }, {
+        title: '报警值',
+        dataIndex: 'score',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -200,22 +217,6 @@ export default {
           }
         }
       }, {
-        title: '商品图片',
-        dataIndex: 'images',
-        customRender: (text, record, index) => {
-          if (!record.images) return <a-avatar shape="square" icon="user" />
-          return <a-popover>
-            <template slot="content">
-              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
-            </template>
-            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
-          </a-popover>
-        }
-      }, {
-        title: '备注',
-        dataIndex: 'remark',
-        scopedSlots: { customRender: 'contentShow' }
-      }, {
         title: '操作',
         dataIndex: 'operation',
         scopedSlots: {customRender: 'operation'}
@@ -233,26 +234,26 @@ export default {
       this.advanced = !this.advanced
     },
     add () {
-      this.commodityAdd.visiable = true
+      this.alertAdd.visiable = true
     },
-    handlecommodityAddClose () {
-      this.commodityAdd.visiable = false
+    handlealertAddClose () {
+      this.alertAdd.visiable = false
     },
-    handlecommodityAddSuccess () {
-      this.commodityAdd.visiable = false
-      this.$message.success('新增商品成功')
+    handlealertAddSuccess () {
+      this.alertAdd.visiable = false
+      this.$message.success('新增报警成功')
       this.search()
     },
     edit (record) {
-      this.$refs.commodityEdit.setFormValues(record)
-      this.commodityEdit.visiable = true
+      this.$refs.alertEdit.setFormValues(record)
+      this.alertEdit.visiable = true
     },
-    handlecommodityEditClose () {
-      this.commodityEdit.visiable = false
+    handlealertEditClose () {
+      this.alertEdit.visiable = false
     },
-    handlecommodityEditSuccess () {
-      this.commodityEdit.visiable = false
-      this.$message.success('修改商品成功')
+    handlealertEditSuccess () {
+      this.alertEdit.visiable = false
+      this.$message.success('修改报警成功')
       this.search()
     },
     handleDeptChange (value) {
@@ -270,7 +271,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/commodity-info/' + ids).then(() => {
+          that.$delete('/cos/device-alert-info/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -340,7 +341,7 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
-      this.$get('/cos/commodity-info/page', {
+      this.$get('/cos/device-alert-info/page', {
         ...params
       }).then((r) => {
         let data = r.data.data

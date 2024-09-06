@@ -7,14 +7,6 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="设备编号"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.code"/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item
                 label="设备名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
@@ -23,18 +15,29 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="设备型号"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.model"/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item
                 label="设备类型"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.typeName"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="所属用户"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-input v-model="queryParams.userName"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="上下线"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-select v-model="queryParams.onlineFlag">
+                  <a-select-option value="0">否</a-select-option>
+                  <a-select-option value="1">是</a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
           </div>
@@ -140,41 +143,37 @@ export default {
         title: '设备名称',
         dataIndex: 'name'
       }, {
-        title: '型号',
-        dataIndex: 'model',
+        title: '设备在线',
+        dataIndex: 'onlineFlag',
+        customRender: (text, row, index) => {
+          switch (text) {
+            case '0':
+              return <a-tag color="red">否</a-tag>
+            case '1':
+              return <a-tag color="green">是</a-tag>
+            default:
+              return '- -'
+          }
+        }
+      }, {
+        title: '设备开关状态',
+        dataIndex: 'openFlag',
+        customRender: (text, row, index) => {
+          switch (text) {
+            case '0':
+              return <a-tag color="red">关闭</a-tag>
+            case '1':
+              return <a-tag color="green">开启</a-tag>
+            default:
+              return '- -'
+          }
+        }
+      }, {
+        title: '当前设备值',
+        dataIndex: 'deviceValue',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '单位',
-        dataIndex: 'unit',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '采购价格',
-        dataIndex: 'purchasePrice',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text + '元'
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '售价',
-        dataIndex: 'sellPrice',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text + '元'
           } else {
             return '- -'
           }
@@ -190,17 +189,7 @@ export default {
           }
         }
       }, {
-        title: '创建时间',
-        dataIndex: 'createDate',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '设备图片',
+        title: '图片',
         dataIndex: 'images',
         customRender: (text, record, index) => {
           if (!record.images) return <a-avatar shape="square" icon="user" />
@@ -212,9 +201,37 @@ export default {
           </a-popover>
         }
       }, {
-        title: '备注',
-        dataIndex: 'remark',
-        scopedSlots: { customRender: 'contentShow' }
+        title: '所属用户',
+        dataIndex: 'userName',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '用户头像',
+        dataIndex: 'userImages',
+        customRender: (text, record, index) => {
+          if (!record.userImages) return <a-avatar shape="square" icon="user" />
+          return <a-popover>
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
+            </template>
+            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
+          </a-popover>
+        }
+      }, {
+        title: '创建时间',
+        dataIndex: 'createDate',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
       }, {
         title: '操作',
         dataIndex: 'operation',
