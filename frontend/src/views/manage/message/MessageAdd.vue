@@ -87,9 +87,9 @@ const formItemLayout = {
   wrapperCol: { span: 24 }
 }
 export default {
-  name: 'BulletinAdd',
+  name: 'messageAdd',
   props: {
-    bulletinAddVisiable: {
+    messageAddVisiable: {
       default: false
     }
   },
@@ -99,7 +99,7 @@ export default {
     }),
     show: {
       get: function () {
-        return this.bulletinAddVisiable
+        return this.messageAddVisiable
       },
       set: function () {
       }
@@ -147,7 +147,7 @@ export default {
         values.images = images.length > 0 ? images.join(',') : null
         if (!err) {
           this.loading = true
-          this.$post('/cos/bulletin-info', {
+          this.$post('/cos/message-info', {
             ...values
           }).then((r) => {
             this.reset()

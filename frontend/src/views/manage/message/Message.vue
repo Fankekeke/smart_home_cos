@@ -7,15 +7,15 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="标题"
+                label="所属用户"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.title"/>
+                <a-input v-model="queryParams.userName"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="内容"
+                label="消息内容"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.content"/>
@@ -71,39 +71,39 @@
         </template>
       </a-table>
     </div>
-    <bulletin-add
-      v-if="bulletinAdd.visiable"
-      @close="handleBulletinAddClose"
-      @success="handleBulletinAddSuccess"
-      :bulletinAddVisiable="bulletinAdd.visiable">
-    </bulletin-add>
-    <bulletin-edit
-      ref="bulletinEdit"
-      @close="handleBulletinEditClose"
-      @success="handleBulletinEditSuccess"
-      :bulletinEditVisiable="bulletinEdit.visiable">
-    </bulletin-edit>
+    <message-add
+      v-if="messageAdd.visiable"
+      @close="handlemessageAddClose"
+      @success="handlemessageAddSuccess"
+      :messageAddVisiable="messageAdd.visiable">
+    </message-add>
+    <message-edit
+      ref="messageEdit"
+      @close="handlemessageEditClose"
+      @success="handlemessageEditSuccess"
+      :messageEditVisiable="messageEdit.visiable">
+    </message-edit>
   </a-card>
 </template>
 
 <script>
 import RangeDate from '@/components/datetime/RangeDate'
-import BulletinAdd from './MessageAdd.vue'
-import BulletinEdit from './MessageEdit.vue'
+import messageAdd from './MessageAdd.vue'
+import messageEdit from './MessageEdit.vue'
 import {mapState} from 'vuex'
 import moment from 'moment'
 moment.locale('zh-cn')
 
 export default {
-  name: 'Bulletin',
-  components: {BulletinAdd, BulletinEdit, RangeDate},
+  name: 'message',
+  components: {messageAdd, messageEdit, RangeDate},
   data () {
     return {
       advanced: false,
-      bulletinAdd: {
+      messageAdd: {
         visiable: false
       },
-      bulletinEdit: {
+      messageEdit: {
         visiable: false
       },
       queryParams: {},
@@ -130,18 +130,8 @@ export default {
     }),
     columns () {
       return [{
-        title: '标题',
-        dataIndex: 'title',
-        scopedSlots: { customRender: 'titleShow' },
-        width: 300
-      }, {
-        title: '公告内容',
-        dataIndex: 'content',
-        scopedSlots: { customRender: 'contentShow' },
-        width: 600
-      }, {
-        title: '发布时间',
-        dataIndex: 'createDate',
+        title: '所属用户',
+        dataIndex: 'userName',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -150,21 +140,43 @@ export default {
           }
         }
       }, {
-        title: '公告状态',
-        dataIndex: 'rackUp',
+        title: '用户头像',
+        dataIndex: 'userImages',
+        customRender: (text, record, index) => {
+          if (!record.userImages) return <a-avatar shape="square" icon="user" />
+          return <a-popover>
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
+            </template>
+            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
+          </a-popover>
+        }
+      }, {
+        title: '消息通知状态',
+        dataIndex: 'readStatus',
         customRender: (text, row, index) => {
           switch (text) {
             case 0:
-              return <a-tag>下架</a-tag>
+              return <a-tag>未读</a-tag>
             case 1:
-              return <a-tag>已发布</a-tag>
+              return <a-tag>已读</a-tag>
             default:
               return '- -'
           }
         }
       }, {
-        title: '上传人',
-        dataIndex: 'publisher',
+        title: '消息内容',
+        dataIndex: 'content',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '发送时间',
+        dataIndex: 'createDate',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -190,26 +202,26 @@ export default {
       this.advanced = !this.advanced
     },
     add () {
-      this.bulletinAdd.visiable = true
+      this.messageAdd.visiable = true
     },
-    handleBulletinAddClose () {
-      this.bulletinAdd.visiable = false
+    handlemessageAddClose () {
+      this.messageAdd.visiable = false
     },
-    handleBulletinAddSuccess () {
-      this.bulletinAdd.visiable = false
-      this.$message.success('新增公告成功')
+    handlemessageAddSuccess () {
+      this.messageAdd.visiable = false
+      this.$message.success('新增消息通知成功')
       this.search()
     },
     edit (record) {
-      this.$refs.bulletinEdit.setFormValues(record)
-      this.bulletinEdit.visiable = true
+      this.$refs.messageEdit.setFormValues(record)
+      this.messageEdit.visiable = true
     },
-    handleBulletinEditClose () {
-      this.bulletinEdit.visiable = false
+    handlemessageEditClose () {
+      this.messageEdit.visiable = false
     },
-    handleBulletinEditSuccess () {
-      this.bulletinEdit.visiable = false
-      this.$message.success('修改公告成功')
+    handlemessageEditSuccess () {
+      this.messageEdit.visiable = false
+      this.$message.success('修改消息通知成功')
       this.search()
     },
     handleDeptChange (value) {
@@ -227,7 +239,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/bulletin-info/' + ids).then(() => {
+          that.$delete('/cos/message-info/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -297,7 +309,7 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
-      this.$get('/cos/bulletin-info/page', {
+      this.$get('/cos/message-info/page', {
         ...params
       }).then((r) => {
         let data = r.data.data
