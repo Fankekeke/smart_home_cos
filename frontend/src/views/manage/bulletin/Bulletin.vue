@@ -132,23 +132,15 @@ export default {
       return [{
         title: '标题',
         dataIndex: 'title',
-        scopedSlots: { customRender: 'titleShow' },
-        width: 300
+        ellipsis: true
       }, {
         title: '公告内容',
         dataIndex: 'content',
-        scopedSlots: { customRender: 'contentShow' },
-        width: 600
+        ellipsis: true
       }, {
         title: '发布时间',
         dataIndex: 'createDate',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
+        ellipsis: true
       }, {
         title: '公告状态',
         dataIndex: 'rackUp',

@@ -139,8 +139,7 @@ export default {
       typeList: []
     }
   },
-  mounted() {
-    this.selectTypeList()
+  mounted () {
   },
   methods: {
     selectTypeList () {

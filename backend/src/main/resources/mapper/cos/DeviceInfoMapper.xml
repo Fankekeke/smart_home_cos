@@ -26,17 +26,17 @@
         (ui.id = di.user_id)
         where
         1 = 1
-        <if test="deviceHistoryInfo.name != null and deviceHistoryInfo.name != ''">
-            AND di.name LIKE CONCAT('%',#{deviceHistoryInfo.name},'%')
+        <if test="deviceInfo.name != null and deviceInfo.name != ''">
+            AND di.name LIKE CONCAT('%',#{deviceInfo.name},'%')
         </if>
-        <if test="deviceHistoryInfo.typeName != null and deviceHistoryInfo.typeName != ''">
-            AND dt.name LIKE CONCAT('%',#{deviceHistoryInfo.typeName},'%')
+        <if test="deviceInfo.typeName != null and deviceInfo.typeName != ''">
+            AND dt.name LIKE CONCAT('%',#{deviceInfo.typeName},'%')
         </if>
-        <if test="deviceHistoryInfo.userName != null and deviceHistoryInfo.userName != ''">
-            AND ui.name LIKE CONCAT('%',#{deviceHistoryInfo.userName},'%')
+        <if test="deviceInfo.userName != null and deviceInfo.userName != ''">
+            AND ui.name LIKE CONCAT('%',#{deviceInfo.userName},'%')
         </if>
-        <if test="deviceHistoryInfo.onlineFlag != null and deviceHistoryInfo.onlineFlag != ''">
-            AND di.online_flag = #{deviceHistoryInfo.onlineFlag}
+        <if test="deviceInfo.onlineFlag != null and deviceInfo.onlineFlag != ''">
+            AND di.online_flag = #{deviceInfo.onlineFlag}
         </if>
         order by
         di.create_date desc

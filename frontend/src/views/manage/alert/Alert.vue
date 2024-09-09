@@ -135,10 +135,12 @@ export default {
     columns () {
       return [{
         title: '设备编号',
-        dataIndex: 'deviceCode'
+        dataIndex: 'deviceCode',
+        ellipsis: true
       }, {
         title: '设备名称',
-        dataIndex: 'deviceName'
+        dataIndex: 'deviceName',
+        ellipsis: true
       }, {
         title: '设备类型',
         dataIndex: 'typeName',
@@ -148,7 +150,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '图片',
         dataIndex: 'images',
@@ -170,7 +173,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '用户头像',
         dataIndex: 'userImages',
@@ -188,9 +192,9 @@ export default {
         dataIndex: 'type',
         customRender: (text, row, index) => {
           switch (text) {
-            case 1:
+            case '1':
               return <a-tag>持续时常报警</a-tag>
-            case 2:
+            case '2':
               return <a-tag>目标值越界</a-tag>
             default:
               return '- -'
@@ -215,7 +219,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '操作',
         dataIndex: 'operation',

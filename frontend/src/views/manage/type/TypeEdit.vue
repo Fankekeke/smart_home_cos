@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="show" title="修改设备类型" @cancel="onClose" :width="800">
+  <a-modal v-model="show" title="修改设备类型" @cancel="onClose" :width="600">
     <template slot="footer">
       <a-button key="back" @click="onClose">
         取消
@@ -10,7 +10,7 @@
     </template>
     <a-form :form="form" layout="vertical">
       <a-row :gutter="20">
-        <a-col :span="12">
+        <a-col :span="24">
           <a-form-item label='设备类型' v-bind="formItemLayout">
             <a-input v-decorator="[
             'name',
@@ -158,6 +158,7 @@ export default {
       })
       this.form.validateFields((err, values) => {
         values.id = this.rowId
+        values.images = images.length > 0 ? images.join(',') : null
         if (!err) {
           this.loading = true
           this.$put('/cos/device-type', {

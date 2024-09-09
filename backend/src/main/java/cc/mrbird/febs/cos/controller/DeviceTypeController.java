@@ -66,6 +66,8 @@ public class DeviceTypeController {
      */
     @PostMapping
     public R save(DeviceType deviceType) {
+        // 类型编号
+        deviceType.setCode("DT-" + System.currentTimeMillis());
         // 创建时间
         deviceType.setCreateDate(DateUtil.formatDateTime(new Date()));
         return R.ok(deviceTypeService.save(deviceType));

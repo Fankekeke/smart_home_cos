@@ -110,6 +110,7 @@ public class DeviceInfoController {
     @Transactional(rollbackFor = Exception.class)
     @PostMapping
     public R save(DeviceInfo deviceInfo) {
+        deviceInfo.setCode("DEV-" + System.currentTimeMillis());
         // 所属用户
         UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, deviceInfo.getUserId()));
         if (userInfo != null) {

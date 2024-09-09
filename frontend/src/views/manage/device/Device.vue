@@ -138,10 +138,12 @@ export default {
     columns () {
       return [{
         title: '设备编号',
-        dataIndex: 'code'
+        dataIndex: 'code',
+        ellipsis: true
       }, {
         title: '设备名称',
-        dataIndex: 'name'
+        dataIndex: 'name',
+        ellipsis: true
       }, {
         title: '设备在线',
         dataIndex: 'onlineFlag',
@@ -177,7 +179,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '设备类型',
         dataIndex: 'typeName',
@@ -187,7 +190,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '图片',
         dataIndex: 'images',
@@ -209,7 +213,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '用户头像',
         dataIndex: 'userImages',
@@ -231,7 +236,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '操作',
         dataIndex: 'operation',

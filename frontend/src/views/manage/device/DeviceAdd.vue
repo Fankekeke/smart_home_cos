@@ -19,6 +19,18 @@
           </a-form-item>
         </a-col>
         <a-col :span="12">
+          <a-form-item label='设备上下线' v-bind="formItemLayout">
+            <a-radio-group button-style="solid"
+                           v-decorator="[
+                'onlineFlag',
+                {rules: [{ required: true, message: '请选择设备上下线' }]}
+              ]">
+              <a-radio-button value="0">否</a-radio-button>
+              <a-radio-button value="1">是</a-radio-button>
+            </a-radio-group>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
           <a-form-item label='设备类型' v-bind="formItemLayout">
             <a-select v-decorator="[
                   'typeId',
@@ -29,26 +41,14 @@
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label='设备上下线' v-bind="formItemLayout">
-            <a-radio-group
-              v-decorator="[
-                'onlineFlag',
-                {rules: [{ required: true, message: '请选择设备上下线' }]}
-              ]">
-              <a-radio value="0">否</a-radio>
-              <a-radio value="1">是</a-radio>
-            </a-radio-group>
-          </a-form-item>
-        </a-col>
-        <a-col :span="12">
           <a-form-item label='设备开关状态' v-bind="formItemLayout">
-            <a-radio-group
+            <a-radio-group button-style="solid"
               v-decorator="[
                 'openFlag',
                 {rules: [{ required: true, message: '请选择设备开关状态' }]}
               ]">
-              <a-radio value="0">关闭</a-radio>
-              <a-radio value="1">开启</a-radio>
+              <a-radio-button value="0">关闭</a-radio-button>
+              <a-radio-button value="1">开启</a-radio-button>
             </a-radio-group>
           </a-form-item>
         </a-col>

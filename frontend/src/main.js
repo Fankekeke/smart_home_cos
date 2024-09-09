@@ -6,7 +6,6 @@ import store from './store'
 import request from 'utils/request'
 import db from 'utils/localstorage'
 import VueApexCharts from 'vue-apexcharts'
-import jm from 'vue-jsmind'
 
 import 'ant-design-vue/dist/antd.css'
 
@@ -16,7 +15,6 @@ Vue.config.productionTip = false
 Vue.use(Antd)
 Vue.use(db)
 Vue.use(VueApexCharts)
-Vue.use(jm)
 
 if (window.jsMind) {
   console.log('wind')

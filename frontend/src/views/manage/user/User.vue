@@ -7,7 +7,7 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="企业名称"
+                label="用户名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.name"/>
@@ -39,7 +39,7 @@
     </div>
     <div>
       <div class="operator">
-        <a-button type="primary" ghost @click="add">新增</a-button>
+<!--        <a-button type="primary" ghost @click="add">新增</a-button>-->
       </div>
       <!-- 表格区域 -->
       <a-table ref="TableInfo"
@@ -62,8 +62,8 @@
           </template>
         </template>
         <template slot="operation" slot-scope="text, record">
-          <a-icon type="cloud" @click="handleUserViewOpen(record)" title="详 情" style="margin-right: 10px"></a-icon>
-          <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改" style="margin-right: 10px"></a-icon>
+<!--          <a-icon type="cloud" @click="handleUserViewOpen(record)" title="详 情" style="margin-right: 10px"></a-icon>-->
+<!--          <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改" style="margin-right: 10px"></a-icon>-->
           <a-icon v-if="record.status == 0" type="caret-up" @click="audit(record.id, 1)" title="up" style="margin-right: 10px"></a-icon>
           <a-icon v-if="record.status == 1" type="caret-down" @click="audit(record.id, 0)" title="down" style="margin-right: 10px"></a-icon>
         </template>
@@ -141,23 +141,8 @@ export default {
         title: '用户编号',
         dataIndex: 'code'
       }, {
-        title: '企业名称',
+        title: '用户名称',
         dataIndex: 'name'
-      }, {
-        title: '审核状态',
-        dataIndex: 'status',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case '0':
-              return <a-tag>未审核</a-tag>
-            case '1':
-              return <a-tag color="red">审核驳回</a-tag>
-            case '2':
-              return <a-tag color="green">已审核</a-tag>
-            default:
-              return '- -'
-          }
-        }
       }, {
         title: '用户头像',
         dataIndex: 'images',
@@ -171,46 +156,13 @@ export default {
           </a-popover>
         }
       }, {
-        title: '联系方式',
-        dataIndex: 'phone'
-      }, {
-        title: '类型',
-        dataIndex: 'type',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case '1':
-              return <a-tag>经销商</a-tag>
-            case '2':
-              return <a-tag>批发商</a-tag>
-            case '3':
-              return <a-tag>散客</a-tag>
-            case '4':
-              return <a-tag>代理商</a-tag>
-            default:
-              return '- -'
-          }
-        }
-      }, {
-        title: '联系人',
-        dataIndex: 'contact',
+        title: '备注',
+        dataIndex: 'remark',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
           } else {
             return '- -'
-          }
-        }
-      }, {
-        title: '性别',
-        dataIndex: 'sex',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case '1':
-              return <a-tag color="blue">男</a-tag>
-            case '2':
-              return <a-tag color="pink">女</a-tag>
-            default:
-              return '- -'
           }
         }
       }, {

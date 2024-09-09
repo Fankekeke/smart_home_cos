@@ -39,7 +39,7 @@
     </div>
     <div>
       <div class="operator">
-        <a-button type="primary" ghost @click="add">新增</a-button>
+<!--        <a-button type="primary" ghost @click="add">新增</a-button>-->
         <a-button @click="batchDelete">删除</a-button>
       </div>
       <!-- 表格区域 -->
@@ -127,10 +127,12 @@ export default {
     columns () {
       return [{
         title: '设备编号',
-        dataIndex: 'deviceCode'
+        dataIndex: 'deviceCode',
+        ellipsis: true
       }, {
         title: '设备名称',
-        dataIndex: 'deviceName'
+        dataIndex: 'deviceName',
+        ellipsis: true
       }, {
         title: '设备类型',
         dataIndex: 'typeName',
@@ -140,7 +142,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '图片',
         dataIndex: 'images',
@@ -158,9 +161,9 @@ export default {
         dataIndex: 'type',
         customRender: (text, row, index) => {
           switch (text) {
-            case 0:
+            case '0':
               return <a-tag color="red">下线</a-tag>
-            case 1:
+            case '1':
               return <a-tag color="green">上线</a-tag>
             default:
               return '- -'
@@ -175,7 +178,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '所属用户',
         dataIndex: 'userName',
@@ -185,7 +189,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '用户头像',
         dataIndex: 'userImages',

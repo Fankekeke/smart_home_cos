@@ -1,9 +1,11 @@
 package cc.mrbird.febs.cos.controller;
 
 
+import cc.mrbird.febs.common.exception.FebsException;
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.DeviceAlertInfo;
 import cc.mrbird.febs.cos.service.IDeviceAlertInfoService;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -66,7 +68,11 @@ public class DeviceAlertInfoController {
      * @return 结果
      */
     @PostMapping
-    public R save(DeviceAlertInfo deviceAlertInfo) {
+    public R save(DeviceAlertInfo deviceAlertInfo) throws FebsException {
+        int count = deviceAlertInfoService.count(Wrappers.<DeviceAlertInfo>lambdaQuery().eq(DeviceAlertInfo::getDeviceId, deviceAlertInfo.getDeviceId()));
+        if (count > 1) {
+            throw new FebsException("改设备已经绑定报警配置");
+        }
         // 上报时间
         deviceAlertInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
         return R.ok(deviceAlertInfoService.save(deviceAlertInfo));
@@ -79,7 +85,11 @@ public class DeviceAlertInfoController {
      * @return 结果
      */
     @PutMapping
-    public R edit(DeviceAlertInfo deviceAlertInfo) {
+    public R edit(DeviceAlertInfo deviceAlertInfo) throws FebsException {
+        List<DeviceAlertInfo> deviceAlertInfoList = deviceAlertInfoService.list(Wrappers.<DeviceAlertInfo>lambdaQuery().eq(DeviceAlertInfo::getDeviceId, deviceAlertInfo.getDeviceId()));
+        if (CollectionUtil.isNotEmpty(deviceAlertInfoList) && !deviceAlertInfoList.get(0).getId().equals(deviceAlertInfo.getId())) {
+            throw new FebsException("改设备已经绑定报警配置");
+        }
         return R.ok(deviceAlertInfoService.updateById(deviceAlertInfo));
     }
 

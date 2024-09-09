@@ -10,7 +10,7 @@
     </template>
     <a-form :form="form" layout="vertical">
       <a-row :gutter="20">
-        <a-col :span="12">
+        <a-col :span="24">
           <a-form-item label='设备类型' v-bind="formItemLayout">
             <a-input v-decorator="[
             'name',
@@ -126,6 +126,7 @@ export default {
         images.push(image.response)
       })
       this.form.validateFields((err, values) => {
+        values.images = images.length > 0 ? images.join(',') : null
         if (!err) {
           this.loading = true
           this.$post('/cos/device-type', {

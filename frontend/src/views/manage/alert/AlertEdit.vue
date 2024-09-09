@@ -22,13 +22,12 @@
         </a-col>
         <a-col :span="12">
           <a-form-item label='报警类型' v-bind="formItemLayout">
-            <a-radio-group
-              v-decorator="[
-            'type',
-            {rules: [{ required: true, message: '请选择报警类型' }]}
-          ]">
-              <a-radio value="1">持续时常报警</a-radio>
-              <a-radio value="2">目标值越界</a-radio>
+            <a-radio-group button-style="solid" v-decorator="[
+                'type',
+                {rules: [{ required: true, message: '请选择报警类型' }]}
+              ]">
+              <a-radio-button value="1">持续时常报警</a-radio-button>
+              <a-radio-button value="2">目标值越界</a-radio-button>
             </a-radio-group>
           </a-form-item>
         </a-col>
