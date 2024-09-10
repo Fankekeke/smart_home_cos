@@ -210,10 +210,6 @@ export default {
             <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
           </a-popover>
         }
-      }, {
-        title: '操作',
-        dataIndex: 'operation',
-        scopedSlots: {customRender: 'operation'}
       }]
     }
   },

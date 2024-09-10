@@ -70,7 +70,7 @@ public class DeviceAlertInfoController {
     @PostMapping
     public R save(DeviceAlertInfo deviceAlertInfo) throws FebsException {
         int count = deviceAlertInfoService.count(Wrappers.<DeviceAlertInfo>lambdaQuery().eq(DeviceAlertInfo::getDeviceId, deviceAlertInfo.getDeviceId()));
-        if (count > 1) {
+        if (count > 0) {
             throw new FebsException("改设备已经绑定报警配置");
         }
         // 上报时间
