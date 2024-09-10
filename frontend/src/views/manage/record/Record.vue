@@ -158,24 +158,14 @@ export default {
         dataIndex: 'openFlag',
         customRender: (text, row, index) => {
           switch (text) {
-            case 0:
+            case '0':
               return <a-tag color="red">关闭</a-tag>
-            case 1:
+            case '1':
               return <a-tag color="green">开启</a-tag>
-            case 2:
+            case '2':
               return <a-tag color="green">重启</a-tag>
             default:
               return '- -'
-          }
-        }
-      }, {
-        title: '设备值',
-        dataIndex: 'deviceValue',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
           }
         }
       }, {
@@ -210,6 +200,17 @@ export default {
             <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
           </a-popover>
         }
+      }, {
+        title: '上报时间',
+        dataIndex: 'createDate',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        },
+        ellipsis: true
       }]
     }
   },

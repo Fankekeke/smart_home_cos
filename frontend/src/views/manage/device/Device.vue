@@ -75,6 +75,8 @@
         </template>
         <template slot="operation" slot-scope="text, record">
           <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>
+          <a-icon v-if="record.openFlag == 0" type="caret-up" @click="audit(record.id, 1)" title="up" style="margin-left: 10px"></a-icon>
+          <a-icon v-if="record.openFlag == 1" type="caret-down" @click="audit(record.id, 0)" title="down" style="margin-left: 10px"></a-icon>
         </template>
       </a-table>
     </div>
@@ -249,6 +251,12 @@ export default {
     this.fetch()
   },
   methods: {
+    audit (id, status) {
+      this.$get('/cos/device-info/setupOpen', {deviceId: id, openFlag: status}).then((r) => {
+        this.$message.success('修改设备成功')
+        this.search()
+      })
+    },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
     },

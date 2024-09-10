@@ -15,18 +15,18 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="所属用户"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.userName"/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item
                 label="设备类型"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.typeName"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="所属用户"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-input v-model="queryParams.userName"/>
               </a-form-item>
             </a-col>
           </div>
@@ -67,39 +67,39 @@
         </template>
       </a-table>
     </div>
-    <history-add
-      v-if="historyAdd.visiable"
-      @close="handlehistoryAddClose"
-      @success="handlehistoryAddSuccess"
-      :historyAddVisiable="historyAdd.visiable">
-    </history-add>
-    <history-edit
-      ref="historyEdit"
-      @close="handlehistoryEditClose"
-      @success="handlehistoryEditSuccess"
-      :historyEditVisiable="historyEdit.visiable">
-    </history-edit>
+    <offline-add
+      v-if="offlineAdd.visiable"
+      @close="handleofflineAddClose"
+      @success="handleofflineAddSuccess"
+      :offlineAddVisiable="offlineAdd.visiable">
+    </offline-add>
+    <offline-edit
+      ref="offlineEdit"
+      @close="handleofflineEditClose"
+      @success="handleofflineEditSuccess"
+      :offlineEditVisiable="offlineEdit.visiable">
+    </offline-edit>
   </a-card>
 </template>
 
 <script>
 import RangeDate from '@/components/datetime/RangeDate'
-import historyAdd from './HistoryAdd.vue'
-import historyEdit from './HistoryEdit.vue'
+import offlineAdd from './OfflineAdd.vue'
+import offlineEdit from './OfflineEdit.vue'
 import {mapState} from 'vuex'
 import moment from 'moment'
 moment.locale('zh-cn')
 
 export default {
-  name: 'history',
-  components: {historyAdd, historyEdit, RangeDate},
+  name: 'offline',
+  components: {offlineAdd, offlineEdit, RangeDate},
   data () {
     return {
       advanced: false,
-      historyAdd: {
+      offlineAdd: {
         visiable: false
       },
-      historyEdit: {
+      offlineEdit: {
         visiable: false
       },
       queryParams: {},
@@ -157,6 +157,30 @@ export default {
           </a-popover>
         }
       }, {
+        title: '类型',
+        dataIndex: 'type',
+        customRender: (text, row, index) => {
+          switch (text) {
+            case '0':
+              return <a-tag color="red">下线</a-tag>
+            case '1':
+              return <a-tag color="green">上线</a-tag>
+            default:
+              return '- -'
+          }
+        }
+      }, {
+        title: '上下线时间',
+        dataIndex: 'onlineDate',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        },
+        ellipsis: true
+      }, {
         title: '所属用户',
         dataIndex: 'userName',
         customRender: (text, row, index) => {
@@ -168,36 +192,17 @@ export default {
         },
         ellipsis: true
       }, {
-        title: '设备值',
-        dataIndex: 'deviceValue',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
+        title: '用户头像',
+        dataIndex: 'userImages',
+        customRender: (text, record, index) => {
+          if (!record.userImages) return <a-avatar shape="square" icon="user" />
+          return <a-popover>
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
+            </template>
+            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
+          </a-popover>
         }
-      }, {
-        title: '报警值',
-        dataIndex: 'alertValue',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '上报时间',
-        dataIndex: 'createDate',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        },
-        ellipsis: true
       }]
     }
   },
@@ -212,26 +217,26 @@ export default {
       this.advanced = !this.advanced
     },
     add () {
-      this.historyAdd.visiable = true
+      this.offlineAdd.visiable = true
     },
-    handlehistoryAddClose () {
-      this.historyAdd.visiable = false
+    handleofflineAddClose () {
+      this.offlineAdd.visiable = false
     },
-    handlehistoryAddSuccess () {
-      this.historyAdd.visiable = false
-      this.$message.success('新增历史上报数据成功')
+    handleofflineAddSuccess () {
+      this.offlineAdd.visiable = false
+      this.$message.success('新增设备上下线成功')
       this.search()
     },
     edit (record) {
-      this.$refs.historyEdit.setFormValues(record)
-      this.historyEdit.visiable = true
+      this.$refs.offlineEdit.setFormValues(record)
+      this.offlineEdit.visiable = true
     },
-    handlehistoryEditClose () {
-      this.historyEdit.visiable = false
+    handleofflineEditClose () {
+      this.offlineEdit.visiable = false
     },
-    handlehistoryEditSuccess () {
-      this.historyEdit.visiable = false
-      this.$message.success('修改历史上报数据成功')
+    handleofflineEditSuccess () {
+      this.offlineEdit.visiable = false
+      this.$message.success('修改设备上下线成功')
       this.search()
     },
     handleDeptChange (value) {
@@ -249,7 +254,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/device-history-info/' + ids).then(() => {
+          that.$delete('/cos/device-offline-record/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -319,7 +324,8 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
-      this.$get('/cos/device-history-info/page', {
+      params.userId = this.currentUser.userId
+      this.$get('/cos/device-offline-record/page', {
         ...params
       }).then((r) => {
         let data = r.data.data

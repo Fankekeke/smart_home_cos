@@ -103,6 +103,7 @@ public class DeviceInfoController {
         OperateRecordInfo operateRecordInfo = new OperateRecordInfo();
         operateRecordInfo.setDeviceId(deviceId);
         operateRecordInfo.setOpenFlag(openFlag);
+        operateRecordInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
         operateRecordInfo.setDeviceOldValue(deviceInfo.getDeviceValue());
         operateRecordInfoService.save(operateRecordInfo);
         // 设置更新信息

@@ -10,7 +10,15 @@
                 label="设备名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.deviceName"/>
+                <a-input v-model="queryParams.name"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="设备类型"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-input v-model="queryParams.typeName"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
@@ -23,10 +31,13 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="设备类型"
+                label="上下线"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.typeName"/>
+                <a-select v-model="queryParams.onlineFlag">
+                  <a-select-option value="0">否</a-select-option>
+                  <a-select-option value="1">是</a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
           </div>
@@ -39,7 +50,7 @@
     </div>
     <div>
       <div class="operator">
-<!--        <a-button type="primary" ghost @click="add">新增</a-button>-->
+        <a-button type="primary" ghost @click="add">新增</a-button>
         <a-button @click="batchDelete">删除</a-button>
       </div>
       <!-- 表格区域 -->
@@ -64,42 +75,44 @@
         </template>
         <template slot="operation" slot-scope="text, record">
           <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>
+          <a-icon v-if="record.openFlag == 0" type="caret-up" @click="audit(record.id, 1)" title="up" style="margin-left: 10px"></a-icon>
+          <a-icon v-if="record.openFlag == 1" type="caret-down" @click="audit(record.id, 0)" title="down" style="margin-left: 10px"></a-icon>
         </template>
       </a-table>
     </div>
-    <history-add
-      v-if="historyAdd.visiable"
-      @close="handlehistoryAddClose"
-      @success="handlehistoryAddSuccess"
-      :historyAddVisiable="historyAdd.visiable">
-    </history-add>
-    <history-edit
-      ref="historyEdit"
-      @close="handlehistoryEditClose"
-      @success="handlehistoryEditSuccess"
-      :historyEditVisiable="historyEdit.visiable">
-    </history-edit>
+    <device-add
+      v-if="deviceAdd.visiable"
+      @close="handledeviceAddClose"
+      @success="handledeviceAddSuccess"
+      :deviceAddVisiable="deviceAdd.visiable">
+    </device-add>
+    <device-edit
+      ref="deviceEdit"
+      @close="handledeviceEditClose"
+      @success="handledeviceEditSuccess"
+      :deviceEditVisiable="deviceEdit.visiable">
+    </device-edit>
   </a-card>
 </template>
 
 <script>
 import RangeDate from '@/components/datetime/RangeDate'
-import historyAdd from './HistoryAdd.vue'
-import historyEdit from './HistoryEdit.vue'
+import deviceAdd from './DeviceAdd.vue'
+import deviceEdit from './DeviceEdit.vue'
 import {mapState} from 'vuex'
 import moment from 'moment'
 moment.locale('zh-cn')
 
 export default {
-  name: 'history',
-  components: {historyAdd, historyEdit, RangeDate},
+  name: 'device',
+  components: {deviceAdd, deviceEdit, RangeDate},
   data () {
     return {
       advanced: false,
-      historyAdd: {
+      deviceAdd: {
         visiable: false
       },
-      historyEdit: {
+      deviceEdit: {
         visiable: false
       },
       queryParams: {},
@@ -127,11 +140,48 @@ export default {
     columns () {
       return [{
         title: '设备编号',
-        dataIndex: 'deviceCode',
+        dataIndex: 'code',
         ellipsis: true
       }, {
         title: '设备名称',
-        dataIndex: 'deviceName',
+        dataIndex: 'name',
+        ellipsis: true
+      }, {
+        title: '设备在线',
+        dataIndex: 'onlineFlag',
+        customRender: (text, row, index) => {
+          switch (text) {
+            case '0':
+              return <a-tag color="red">否</a-tag>
+            case '1':
+              return <a-tag color="green">是</a-tag>
+            default:
+              return '- -'
+          }
+        }
+      }, {
+        title: '设备开关状态',
+        dataIndex: 'openFlag',
+        customRender: (text, row, index) => {
+          switch (text) {
+            case '0':
+              return <a-tag color="red">关闭</a-tag>
+            case '1':
+              return <a-tag color="green">开启</a-tag>
+            default:
+              return '- -'
+          }
+        }
+      }, {
+        title: '当前设备值',
+        dataIndex: 'deviceValue',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        },
         ellipsis: true
       }, {
         title: '设备类型',
@@ -168,27 +218,19 @@ export default {
         },
         ellipsis: true
       }, {
-        title: '设备值',
-        dataIndex: 'deviceValue',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
+        title: '用户头像',
+        dataIndex: 'userImages',
+        customRender: (text, record, index) => {
+          if (!record.userImages) return <a-avatar shape="square" icon="user" />
+          return <a-popover>
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
+            </template>
+            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
+          </a-popover>
         }
       }, {
-        title: '报警值',
-        dataIndex: 'alertValue',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '上报时间',
+        title: '创建时间',
         dataIndex: 'createDate',
         customRender: (text, row, index) => {
           if (text !== null) {
@@ -198,6 +240,10 @@ export default {
           }
         },
         ellipsis: true
+      }, {
+        title: '操作',
+        dataIndex: 'operation',
+        scopedSlots: {customRender: 'operation'}
       }]
     }
   },
@@ -205,6 +251,12 @@ export default {
     this.fetch()
   },
   methods: {
+    audit (id, status) {
+      this.$get('/cos/device-info/setupOpen', {deviceId: id, openFlag: status}).then((r) => {
+        this.$message.success('修改设备成功')
+        this.search()
+      })
+    },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
     },
@@ -212,26 +264,26 @@ export default {
       this.advanced = !this.advanced
     },
     add () {
-      this.historyAdd.visiable = true
+      this.deviceAdd.visiable = true
     },
-    handlehistoryAddClose () {
-      this.historyAdd.visiable = false
+    handledeviceAddClose () {
+      this.deviceAdd.visiable = false
     },
-    handlehistoryAddSuccess () {
-      this.historyAdd.visiable = false
-      this.$message.success('新增历史上报数据成功')
+    handledeviceAddSuccess () {
+      this.deviceAdd.visiable = false
+      this.$message.success('新增设备成功')
       this.search()
     },
     edit (record) {
-      this.$refs.historyEdit.setFormValues(record)
-      this.historyEdit.visiable = true
+      this.$refs.deviceEdit.setFormValues(record)
+      this.deviceEdit.visiable = true
     },
-    handlehistoryEditClose () {
-      this.historyEdit.visiable = false
+    handledeviceEditClose () {
+      this.deviceEdit.visiable = false
     },
-    handlehistoryEditSuccess () {
-      this.historyEdit.visiable = false
-      this.$message.success('修改历史上报数据成功')
+    handledeviceEditSuccess () {
+      this.deviceEdit.visiable = false
+      this.$message.success('修改设备成功')
       this.search()
     },
     handleDeptChange (value) {
@@ -249,7 +301,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/device-history-info/' + ids).then(() => {
+          that.$delete('/cos/device-info/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -319,7 +371,8 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
-      this.$get('/cos/device-history-info/page', {
+      params.userId = this.currentUser.userId
+      this.$get('/cos/device-info/page', {
         ...params
       }).then((r) => {
         let data = r.data.data

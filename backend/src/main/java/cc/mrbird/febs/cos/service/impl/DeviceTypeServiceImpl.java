@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -51,7 +52,8 @@ public class DeviceTypeServiceImpl extends ServiceImpl<DeviceTypeMapper, DeviceT
     /**
      * 定时任务设置设备上报数据
      */
-    private void setDeviceRecord() {
+    @Scheduled(fixedRate = 300000)
+    public void setDeviceRecord() {
         // 获取设备信息
         List<DeviceInfo> deviceInfoList = deviceInfoService.list();
         if (CollectionUtil.isEmpty(deviceInfoList)) {
@@ -84,7 +86,7 @@ public class DeviceTypeServiceImpl extends ServiceImpl<DeviceTypeMapper, DeviceT
                     MessageInfo messageInfo = new MessageInfo();
                     messageInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
                     messageInfo.setSendUser(device.getUserId());
-                    messageInfo.setContent("你好，您的设备 " + device.getDeviceName() + " 触发自定义报警，报警值为" + historyInfo.getDeviceValue() +"，请尽快查看处理");
+                    messageInfo.setContent("你好，您的设备 " + device.getName() + " 触发自定义报警，报警值为" + historyInfo.getDeviceValue() +"，请尽快查看处理");
                     messageInfo.setReadStatus(0);
                     messageInfoList.add(messageInfo);
                 }
@@ -99,6 +101,7 @@ public class DeviceTypeServiceImpl extends ServiceImpl<DeviceTypeMapper, DeviceT
     /**
      * 定时任务处理时常报警信息
      */
+    @Scheduled(fixedRate = 350000)
     public void setDeviceAlert() {
         // 获取设备信息
         List<DeviceInfo> deviceInfoList = deviceInfoService.list(Wrappers.<DeviceInfo>lambdaQuery().eq(DeviceInfo::getOpenFlag, "1"));
@@ -111,7 +114,7 @@ public class DeviceTypeServiceImpl extends ServiceImpl<DeviceTypeMapper, DeviceT
         for (DeviceInfo device : deviceInfoList) {
             // 获取此设备报警配置
             DeviceAlertInfo alert = deviceAlertMap.get(device.getId());
-            if (alert == null) {
+            if (alert == null || device.getLastOpenDate() == null) {
                 continue;
             }
 
@@ -122,7 +125,7 @@ public class DeviceTypeServiceImpl extends ServiceImpl<DeviceTypeMapper, DeviceT
                 MessageInfo messageInfo = new MessageInfo();
                 messageInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
                 messageInfo.setSendUser(device.getUserId());
-                messageInfo.setContent("你好，您的设备 " + device.getDeviceName() + " 触发超时报警，当前运行为" + minute +"分钟，请尽快查看处理");
+                messageInfo.setContent("你好，您的设备 " + device.getName() + " 触发超时报警，当前运行为" + minute +"分钟，请尽快查看处理");
                 messageInfo.setReadStatus(0);
                 messageInfoList.add(messageInfo);
             }

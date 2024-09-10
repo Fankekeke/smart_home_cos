@@ -138,7 +138,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '用户头像',
         dataIndex: 'userImages',
@@ -173,7 +174,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '发送时间',
         dataIndex: 'createDate',
@@ -183,11 +185,8 @@ export default {
           } else {
             return '- -'
           }
-        }
-      }, {
-        title: '操作',
-        dataIndex: 'operation',
-        scopedSlots: {customRender: 'operation'}
+        },
+        ellipsis: true
       }]
     }
   },

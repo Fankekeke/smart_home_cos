@@ -7,14 +7,6 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="设备名称"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.deviceName"/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item
                 label="所属用户"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
@@ -23,10 +15,10 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="设备类型"
+                label="消息内容"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.typeName"/>
+                <a-input v-model="queryParams.content"/>
               </a-form-item>
             </a-col>
           </div>
@@ -39,7 +31,7 @@
     </div>
     <div>
       <div class="operator">
-<!--        <a-button type="primary" ghost @click="add">新增</a-button>-->
+        <a-button type="primary" ghost @click="add">新增</a-button>
         <a-button @click="batchDelete">删除</a-button>
       </div>
       <!-- 表格区域 -->
@@ -52,13 +44,25 @@
                :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
                :scroll="{ x: 900 }"
                @change="handleTableChange">
+        <template slot="titleShow" slot-scope="text, record">
+          <template>
+            <a-badge status="processing" v-if="record.rackUp === 1"/>
+            <a-badge status="error" v-if="record.rackUp === 0"/>
+            <a-tooltip>
+              <template slot="title">
+                {{ record.title }}
+              </template>
+              {{ record.title.slice(0, 8) }} ...
+            </a-tooltip>
+          </template>
+        </template>
         <template slot="contentShow" slot-scope="text, record">
           <template>
             <a-tooltip>
               <template slot="title">
-                {{ record.remark }}
+                {{ record.content }}
               </template>
-              {{ record.remark.slice(0, 10) }} ...
+              {{ record.content.slice(0, 40) }} ...
             </a-tooltip>
           </template>
         </template>
@@ -67,39 +71,39 @@
         </template>
       </a-table>
     </div>
-    <history-add
-      v-if="historyAdd.visiable"
-      @close="handlehistoryAddClose"
-      @success="handlehistoryAddSuccess"
-      :historyAddVisiable="historyAdd.visiable">
-    </history-add>
-    <history-edit
-      ref="historyEdit"
-      @close="handlehistoryEditClose"
-      @success="handlehistoryEditSuccess"
-      :historyEditVisiable="historyEdit.visiable">
-    </history-edit>
+    <message-add
+      v-if="messageAdd.visiable"
+      @close="handlemessageAddClose"
+      @success="handlemessageAddSuccess"
+      :messageAddVisiable="messageAdd.visiable">
+    </message-add>
+    <message-edit
+      ref="messageEdit"
+      @close="handlemessageEditClose"
+      @success="handlemessageEditSuccess"
+      :messageEditVisiable="messageEdit.visiable">
+    </message-edit>
   </a-card>
 </template>
 
 <script>
 import RangeDate from '@/components/datetime/RangeDate'
-import historyAdd from './HistoryAdd.vue'
-import historyEdit from './HistoryEdit.vue'
+import messageAdd from './MessageAdd.vue'
+import messageEdit from './MessageEdit.vue'
 import {mapState} from 'vuex'
 import moment from 'moment'
 moment.locale('zh-cn')
 
 export default {
-  name: 'history',
-  components: {historyAdd, historyEdit, RangeDate},
+  name: 'message',
+  components: {messageAdd, messageEdit, RangeDate},
   data () {
     return {
       advanced: false,
-      historyAdd: {
+      messageAdd: {
         visiable: false
       },
-      historyEdit: {
+      messageEdit: {
         visiable: false
       },
       queryParams: {},
@@ -126,37 +130,6 @@ export default {
     }),
     columns () {
       return [{
-        title: '设备编号',
-        dataIndex: 'deviceCode',
-        ellipsis: true
-      }, {
-        title: '设备名称',
-        dataIndex: 'deviceName',
-        ellipsis: true
-      }, {
-        title: '设备类型',
-        dataIndex: 'typeName',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        },
-        ellipsis: true
-      }, {
-        title: '图片',
-        dataIndex: 'images',
-        customRender: (text, record, index) => {
-          if (!record.images) return <a-avatar shape="square" icon="user" />
-          return <a-popover>
-            <template slot="content">
-              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
-            </template>
-            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.images.split(',')[0] } />
-          </a-popover>
-        }
-      }, {
         title: '所属用户',
         dataIndex: 'userName',
         customRender: (text, row, index) => {
@@ -168,27 +141,43 @@ export default {
         },
         ellipsis: true
       }, {
-        title: '设备值',
-        dataIndex: 'deviceValue',
+        title: '用户头像',
+        dataIndex: 'userImages',
+        customRender: (text, record, index) => {
+          if (!record.userImages) return <a-avatar shape="square" icon="user" />
+          return <a-popover>
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
+            </template>
+            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
+          </a-popover>
+        }
+      }, {
+        title: '消息通知状态',
+        dataIndex: 'readStatus',
+        customRender: (text, row, index) => {
+          switch (text) {
+            case 0:
+              return <a-tag>未读</a-tag>
+            case 1:
+              return <a-tag>已读</a-tag>
+            default:
+              return '- -'
+          }
+        }
+      }, {
+        title: '消息内容',
+        dataIndex: 'content',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
-        title: '报警值',
-        dataIndex: 'alertValue',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        }
-      }, {
-        title: '上报时间',
+        title: '发送时间',
         dataIndex: 'createDate',
         customRender: (text, row, index) => {
           if (text !== null) {
@@ -212,26 +201,26 @@ export default {
       this.advanced = !this.advanced
     },
     add () {
-      this.historyAdd.visiable = true
+      this.messageAdd.visiable = true
     },
-    handlehistoryAddClose () {
-      this.historyAdd.visiable = false
+    handlemessageAddClose () {
+      this.messageAdd.visiable = false
     },
-    handlehistoryAddSuccess () {
-      this.historyAdd.visiable = false
-      this.$message.success('新增历史上报数据成功')
+    handlemessageAddSuccess () {
+      this.messageAdd.visiable = false
+      this.$message.success('新增消息通知成功')
       this.search()
     },
     edit (record) {
-      this.$refs.historyEdit.setFormValues(record)
-      this.historyEdit.visiable = true
+      this.$refs.messageEdit.setFormValues(record)
+      this.messageEdit.visiable = true
     },
-    handlehistoryEditClose () {
-      this.historyEdit.visiable = false
+    handlemessageEditClose () {
+      this.messageEdit.visiable = false
     },
-    handlehistoryEditSuccess () {
-      this.historyEdit.visiable = false
-      this.$message.success('修改历史上报数据成功')
+    handlemessageEditSuccess () {
+      this.messageEdit.visiable = false
+      this.$message.success('修改消息通知成功')
       this.search()
     },
     handleDeptChange (value) {
@@ -249,7 +238,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/device-history-info/' + ids).then(() => {
+          that.$delete('/cos/message-info/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -319,7 +308,8 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
-      this.$get('/cos/device-history-info/page', {
+      params.userId = this.currentUser.userId
+      this.$get('/cos/message-info/page', {
         ...params
       }).then((r) => {
         let data = r.data.data

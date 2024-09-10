@@ -15,18 +15,18 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="所属用户"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.userName"/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item
                 label="设备类型"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.typeName"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="所属用户"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-input v-model="queryParams.userName"/>
               </a-form-item>
             </a-col>
           </div>
@@ -67,39 +67,39 @@
         </template>
       </a-table>
     </div>
-    <history-add
-      v-if="historyAdd.visiable"
-      @close="handlehistoryAddClose"
-      @success="handlehistoryAddSuccess"
-      :historyAddVisiable="historyAdd.visiable">
-    </history-add>
-    <history-edit
-      ref="historyEdit"
-      @close="handlehistoryEditClose"
-      @success="handlehistoryEditSuccess"
-      :historyEditVisiable="historyEdit.visiable">
-    </history-edit>
+    <record-add
+      v-if="recordAdd.visiable"
+      @close="handlerecordAddClose"
+      @success="handlerecordAddSuccess"
+      :recordAddVisiable="recordAdd.visiable">
+    </record-add>
+    <record-edit
+      ref="recordEdit"
+      @close="handlerecordEditClose"
+      @success="handlerecordEditSuccess"
+      :recordEditVisiable="recordEdit.visiable">
+    </record-edit>
   </a-card>
 </template>
 
 <script>
 import RangeDate from '@/components/datetime/RangeDate'
-import historyAdd from './HistoryAdd.vue'
-import historyEdit from './HistoryEdit.vue'
+import recordAdd from './RecordAdd.vue'
+import recordEdit from './RecordEdit.vue'
 import {mapState} from 'vuex'
 import moment from 'moment'
 moment.locale('zh-cn')
 
 export default {
-  name: 'history',
-  components: {historyAdd, historyEdit, RangeDate},
+  name: 'record',
+  components: {recordAdd, recordEdit, RangeDate},
   data () {
     return {
       advanced: false,
-      historyAdd: {
+      recordAdd: {
         visiable: false
       },
-      historyEdit: {
+      recordEdit: {
         visiable: false
       },
       queryParams: {},
@@ -127,12 +127,10 @@ export default {
     columns () {
       return [{
         title: '设备编号',
-        dataIndex: 'deviceCode',
-        ellipsis: true
+        dataIndex: 'deviceCode'
       }, {
         title: '设备名称',
-        dataIndex: 'deviceName',
-        ellipsis: true
+        dataIndex: 'deviceName'
       }, {
         title: '设备类型',
         dataIndex: 'typeName',
@@ -142,8 +140,7 @@ export default {
           } else {
             return '- -'
           }
-        },
-        ellipsis: true
+        }
       }, {
         title: '图片',
         dataIndex: 'images',
@@ -157,19 +154,23 @@ export default {
           </a-popover>
         }
       }, {
-        title: '所属用户',
-        dataIndex: 'userName',
+        title: '设备开关状态',
+        dataIndex: 'openFlag',
         customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
+          switch (text) {
+            case '0':
+              return <a-tag color="red">关闭</a-tag>
+            case '1':
+              return <a-tag color="green">开启</a-tag>
+            case '2':
+              return <a-tag color="green">重启</a-tag>
+            default:
+              return '- -'
           }
-        },
-        ellipsis: true
+        }
       }, {
-        title: '设备值',
-        dataIndex: 'deviceValue',
+        title: '设备值（旧）',
+        dataIndex: 'deviceOldValue',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -178,14 +179,26 @@ export default {
           }
         }
       }, {
-        title: '报警值',
-        dataIndex: 'alertValue',
+        title: '所属用户',
+        dataIndex: 'userName',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
           } else {
             return '- -'
           }
+        }
+      }, {
+        title: '用户头像',
+        dataIndex: 'userImages',
+        customRender: (text, record, index) => {
+          if (!record.userImages) return <a-avatar shape="square" icon="user" />
+          return <a-popover>
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
+            </template>
+            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages.split(',')[0] } />
+          </a-popover>
         }
       }, {
         title: '上报时间',
@@ -212,26 +225,26 @@ export default {
       this.advanced = !this.advanced
     },
     add () {
-      this.historyAdd.visiable = true
+      this.recordAdd.visiable = true
     },
-    handlehistoryAddClose () {
-      this.historyAdd.visiable = false
+    handlerecordAddClose () {
+      this.recordAdd.visiable = false
     },
-    handlehistoryAddSuccess () {
-      this.historyAdd.visiable = false
-      this.$message.success('新增历史上报数据成功')
+    handlerecordAddSuccess () {
+      this.recordAdd.visiable = false
+      this.$message.success('新增操作记录成功')
       this.search()
     },
     edit (record) {
-      this.$refs.historyEdit.setFormValues(record)
-      this.historyEdit.visiable = true
+      this.$refs.recordEdit.setFormValues(record)
+      this.recordEdit.visiable = true
     },
-    handlehistoryEditClose () {
-      this.historyEdit.visiable = false
+    handlerecordEditClose () {
+      this.recordEdit.visiable = false
     },
-    handlehistoryEditSuccess () {
-      this.historyEdit.visiable = false
-      this.$message.success('修改历史上报数据成功')
+    handlerecordEditSuccess () {
+      this.recordEdit.visiable = false
+      this.$message.success('修改操作记录成功')
       this.search()
     },
     handleDeptChange (value) {
@@ -249,7 +262,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/device-history-info/' + ids).then(() => {
+          that.$delete('/cos/operate-record-info/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -319,7 +332,8 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
-      this.$get('/cos/device-history-info/page', {
+      params.userId = this.currentUser.userId
+      this.$get('/cos/operate-record-info/page', {
         ...params
       }).then((r) => {
         let data = r.data.data
