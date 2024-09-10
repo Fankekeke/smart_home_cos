@@ -38,6 +38,7 @@ public class DeviceHistoryInfo implements Serializable {
      */
     private String deviceValue;
 
+
     /**
      * 预警值
      */
@@ -48,6 +49,12 @@ public class DeviceHistoryInfo implements Serializable {
      */
     private String createDate;
 
+    /**
+     * 设备值
+     */
+    @TableField(exist = false)
+    private Double deviceValue1;
+
     @TableField(exist = false)
     private String deviceName;
 
@@ -56,4 +63,13 @@ public class DeviceHistoryInfo implements Serializable {
 
     @TableField(exist = false)
     private String userName;
+
+    @TableField(exist = false)
+    private Integer hour;
+
+    @TableField(exist = false)
+    private Integer day;
+
+    @TableField(exist = false)
+    private Integer month;
 }

@@ -39,7 +39,7 @@ public class DeviceAlertInfo implements Serializable {
     private Integer deviceTypeId;
 
     /**
-     * 预警类型（1.持续时常报警 2.目标值越界）
+     * 预警类型（1.设备开关状态时常报警 2.目标值越界）
      */
     private String type;
 

@@ -70,14 +70,44 @@ public class DeviceInfoController {
     }
 
     /**
-     * 根据用户获取设备在线状态
+     * 设备在线手动设置
      *
-     * @param userId 用户ID
+     * @param deviceId   设备ID
+     * @param onlineFlag 在线状态
      * @return 结果
      */
-    @GetMapping("/selectDeviceStatusByUser")
-    public R selectDeviceStatusByUser(Integer userId) {
-        return R.ok();
+    @GetMapping("/setupOnline")
+    public R setupOnline(Integer deviceId, String onlineFlag) {
+        // 设置上下线记录
+        DeviceOfflineRecord deviceOfflineRecord = new DeviceOfflineRecord();
+        deviceOfflineRecord.setType(onlineFlag);
+        deviceOfflineRecord.setOnlineDate(DateUtil.formatDateTime(new Date()));
+        deviceOfflineRecord.setDeviceId(deviceId);
+        deviceOfflineRecordService.save(deviceOfflineRecord);
+        // 保存更新信息
+        return R.ok(deviceInfoService.update(Wrappers.<DeviceInfo>lambdaUpdate().set(DeviceInfo::getOnlineFlag, onlineFlag).set(DeviceInfo::getOpenFlag, onlineFlag)
+                .eq(DeviceInfo::getId, deviceId)));
+    }
+
+    /**
+     * 设备开关状态手动设置
+     *
+     * @param deviceId 设备ID
+     * @param openFlag 开关状态
+     * @return 结果
+     */
+    @GetMapping("/setupOpen")
+    public R setupOpen(Integer deviceId, String openFlag) {
+        DeviceInfo deviceInfo = deviceInfoService.getById(deviceId);
+        // 设置操作记录
+        OperateRecordInfo operateRecordInfo = new OperateRecordInfo();
+        operateRecordInfo.setDeviceId(deviceId);
+        operateRecordInfo.setOpenFlag(openFlag);
+        operateRecordInfo.setDeviceOldValue(deviceInfo.getDeviceValue());
+        operateRecordInfoService.save(operateRecordInfo);
+        // 设置更新信息
+        return R.ok(deviceInfoService.update(Wrappers.<DeviceInfo>lambdaUpdate().set(DeviceInfo::getOpenFlag, openFlag).set(!"0".equals(openFlag), DeviceInfo::getLastOpenDate, DateUtil.formatDateTime(new Date()))
+                .eq(DeviceInfo::getId, deviceId)));
     }
 
     /**

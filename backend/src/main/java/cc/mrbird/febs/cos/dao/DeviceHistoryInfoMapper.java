@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * 设备上报历史数据 mapper层
@@ -23,4 +24,13 @@ public interface DeviceHistoryInfoMapper extends BaseMapper<DeviceHistoryInfo> {
      * @return 结果
      */
     IPage<LinkedHashMap<String, Object>> selectHistoryPage(Page<DeviceHistoryInfo> page, @Param("deviceHistoryInfo") DeviceHistoryInfo deviceHistoryInfo);
+
+    /**
+     * 根据设备ID获取统计信息
+     *
+     * @param deviceId 设备ID
+     * @param date     统计日期
+     * @return 结果
+     */
+    List<DeviceHistoryInfo> selectRateByDeviceId(@Param("deviceId") Integer deviceId, @Param("date") String date);
 }

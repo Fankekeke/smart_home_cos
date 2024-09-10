@@ -51,6 +51,18 @@ public class DeviceHistoryInfoController {
     }
 
     /**
+     * 根据设备ID获取统计信息
+     *
+     * @param deviceId 设备ID
+     * @param date     统计日期
+     * @return 结果
+     */
+    @GetMapping("/selectHistoryByDevice")
+    public R selectRateByDeviceId(Integer deviceId, String date) {
+        return R.ok(deviceHistoryInfoService.selectRateByDeviceId(deviceId, date));
+    }
+
+    /**
      * 根据设备ID获取历史数据
      *
      * @param deviceId 设备ID

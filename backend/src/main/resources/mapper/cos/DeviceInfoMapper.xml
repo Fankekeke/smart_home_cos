@@ -10,6 +10,7 @@
         di.name,
         di.type_id,
         di.online_flag,
+        di.last_open_date,
         di.create_date,
         di.open_flag,
         di.device_value,

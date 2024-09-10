@@ -39,4 +39,26 @@
         order by
         dhi.create_date desc
     </select>
+
+    <!-- 根据设备ID获取统计信息 -->
+    <select id="selectRateByDeviceId" resultType="cc.mrbird.febs.cos.entity.DeviceHistoryInfo">
+        select
+        dhi.id,
+        dhi.device_id,
+        dhi.device_value,
+        dhi.device_value as deviceValue1,
+        dhi.alert_value,
+        dhi.create_date,
+        DATE_FORMAT(dhi.create_date, '%H') as hour,
+        DATE_FORMAT(dhi.create_date, '%d') as day,
+        DATE_FORMAT(dhi.create_date, '%m') as month
+        from
+        device_history_info dhi
+        where
+        1 = 1
+        and dhi.device_id = #{deviceId}
+        and dhi.create_date BETWEEN CONCAT(#{date}, '00:00:00') AND CONCAT(#{date}, '23:59:59')
+        order by
+        dhi.create_date desc
+    </select>
 </mapper>

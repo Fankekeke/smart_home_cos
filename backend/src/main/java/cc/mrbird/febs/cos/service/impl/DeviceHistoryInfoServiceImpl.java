@@ -3,12 +3,18 @@ package cc.mrbird.febs.cos.service.impl;
 import cc.mrbird.febs.cos.entity.DeviceHistoryInfo;
 import cc.mrbird.febs.cos.dao.DeviceHistoryInfoMapper;
 import cc.mrbird.febs.cos.service.IDeviceHistoryInfoService;
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 设备上报历史数据 实现层
@@ -28,5 +34,37 @@ public class DeviceHistoryInfoServiceImpl extends ServiceImpl<DeviceHistoryInfoM
     @Override
     public IPage<LinkedHashMap<String, Object>> selectHistoryPage(Page<DeviceHistoryInfo> page, DeviceHistoryInfo deviceHistoryInfo) {
         return baseMapper.selectHistoryPage(page, deviceHistoryInfo);
+    }
+
+    /**
+     * 根据设备ID获取统计信息
+     *
+     * @param deviceId 设备ID
+     * @param date     统计日期
+     * @return 结果
+     */
+    @Override
+    public List<LinkedHashMap<String, Object>> selectRateByDeviceId(Integer deviceId, String date) {
+        List<DeviceHistoryInfo> historyList = baseMapper.selectRateByDeviceId(deviceId, date);
+        Map<Integer, List<DeviceHistoryInfo>> historyMap = historyList.stream().collect(Collectors.groupingBy(DeviceHistoryInfo::getHour));
+        // 返回数据
+        List<LinkedHashMap<String, Object>> resultList = new ArrayList<>();
+        for (int i = 0; i <= 24 ; i++) {
+            List<DeviceHistoryInfo> itemList = historyMap.get(i);
+            BigDecimal value = BigDecimal.ZERO;
+            if (CollectionUtil.isNotEmpty(itemList)) {
+                value = BigDecimal.valueOf(itemList.stream().mapToDouble(DeviceHistoryInfo::getDeviceValue1).average().orElse(0));
+            }
+            int finalI = i;
+            BigDecimal finalValue = value;
+            LinkedHashMap<String, Object> item = new LinkedHashMap<String, Object>() {
+                {
+                    put("date", finalI + "时");
+                    put("value", finalValue);
+                }
+            };
+            resultList.add(item);
+        }
+        return resultList;
     }
 }

@@ -83,6 +83,11 @@ public class DeviceInfo implements Serializable {
      */
     private Integer userId;
 
+    /**
+     * 上次开启时间
+     */
+    private String lastOpenDate;
+
     @TableField(exist = false)
     private String deviceName;
 
