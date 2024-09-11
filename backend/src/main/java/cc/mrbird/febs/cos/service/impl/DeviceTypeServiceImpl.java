@@ -1,5 +1,6 @@
 package cc.mrbird.febs.cos.service.impl;
 
+import cc.mrbird.febs.cos.dao.UserInfoMapper;
 import cc.mrbird.febs.cos.entity.*;
 import cc.mrbird.febs.cos.dao.DeviceTypeMapper;
 import cc.mrbird.febs.cos.service.*;
@@ -37,6 +38,11 @@ public class DeviceTypeServiceImpl extends ServiceImpl<DeviceTypeMapper, DeviceT
 
     private final IMessageInfoService messageInfoService;
 
+    private final UserInfoMapper userInfoMapper;
+
+    private final IBulletinInfoService bulletinInfoService;
+
+
     /**
      * 分页获取设备类型信息
      *
@@ -47,6 +53,50 @@ public class DeviceTypeServiceImpl extends ServiceImpl<DeviceTypeMapper, DeviceT
     @Override
     public IPage<LinkedHashMap<String, Object>> selectDeviceTypePage(Page<DeviceType> page, DeviceType deviceType) {
         return baseMapper.selectDeviceTypePage(page, deviceType);
+    }
+
+    /**
+     * 获取首页统计数据
+     *
+     * @return 结果
+     */
+    @Override
+    public LinkedHashMap<String, Object> homeData() {
+        // 返回数据
+        LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>() {
+            {
+                put("userNum", 0);
+                put("deviceNum", 0);
+                put("historyNum", 0);
+                put("alertNum", 0);
+            }
+        };
+
+        result.put("userNum", userInfoMapper.selectCount(Wrappers.<UserInfo>lambdaQuery()));
+        result.put("deviceNum", deviceInfoService.count(Wrappers.<DeviceInfo>lambdaQuery()));
+        result.put("historyNum", deviceHistoryInfoService.count(Wrappers.<DeviceHistoryInfo>lambdaQuery()));
+        result.put("alertNum", messageInfoService.count());
+
+        int year = DateUtil.thisYear();
+        int month = DateUtil.thisMonth() + 1;
+        // 本月数据上报数量
+        result.put("monthNum", baseMapper.selectDataByMonth(year, month));
+        // 本月数据报警数量
+        result.put("monthAlertNum", baseMapper.selectAlertByMonth(year, month));
+
+        // 本年数据上报数量
+        result.put("yearNum", baseMapper.selectDataByMonth(year, null));
+        // 本年数据报警数量
+        result.put("yearAlertNum", baseMapper.selectAlertByMonth(year, null));
+
+        // 近十天数据上报数量
+        result.put("numDayList", baseMapper.selectDataNumWithinDays(null));
+        // 近十天数据上报数量
+        result.put("alertDayList", baseMapper.selectAlertNumWithinDays(null));
+        // 公告信息
+        result.put("bulletin", bulletinInfoService.list(Wrappers.<BulletinInfo>lambdaQuery().eq(BulletinInfo::getRackUp, 1)));
+
+        return result;
     }
 
     /**

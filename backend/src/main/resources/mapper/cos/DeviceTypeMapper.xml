@@ -24,4 +24,117 @@
         order by
         create_date desc
     </select>
+
+    <!-- 根据事件获取数据上报数量 -->
+    <select id="selectDataByMonth" resultType="java.lang.Integer">
+        select count(1)
+        from device_history_info
+        where 1 = 1
+        <if test="year != null">
+            AND DATE_FORMAT( device_history_info.create_date, '%Y' ) = DATE_FORMAT(
+            #{year},
+            '%Y')
+        </if>
+        <if test="month != null">
+            AND DATE_FORMAT( device_history_info.create_date, '%m' ) = DATE_FORMAT(
+            #{month},
+            '%m')
+        </if>
+    </select>
+
+    <!-- 根据事件获取数据报警数量 -->
+    <select id="selectAlertByMonth" resultType="java.lang.Integer">
+        select count(1)
+        from message_info
+        where 1 = 1
+        <if test="year != null">
+            AND DATE_FORMAT( message_info.create_date, '%Y' ) = DATE_FORMAT(
+            #{year},
+            '%Y')
+        </if>
+        <if test="month != null">
+            AND DATE_FORMAT( message_info.create_date, '%m' ) = DATE_FORMAT(
+            #{month},
+            '%m')
+        </if>
+    </select>
+
+    <!-- 十天内上报数量数量统计 -->
+    <select id="selectDataNumWithinDays" resultType="java.util.LinkedHashMap">
+        SELECT
+        DATE_FORMAT( spo.days, '%m-%d' ) AS days,
+        IFNULL(COUNT(oi.id), 0) AS count
+        FROM
+        (
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 0 DAY ) days UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 1 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 2 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 3 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 4 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 5 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 6 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 7 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 8 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 9 DAY )) spo
+        LEFT JOIN device_history_info oi ON (
+        DATE_FORMAT( oi.create_date, '%Y-%m-%d' ) = DATE_FORMAT( spo.days, '%Y-%m-%d' )
+        <if test="userId != null">
+            AND oi.user_id = #{userId}
+        </if>
+        AND oi.status != '0'
+        )
+        GROUP BY
+        days
+        ORDER BY
+        days ASC
+    </select>
+
+    <!-- 十天内报警统计 -->
+    <select id="selectAlertNumWithinDays" resultType="java.util.LinkedHashMap">
+        SELECT
+        DATE_FORMAT( spo.days, '%m-%d' ) AS days,
+        IFNULL(COUNT(oi.id), 0) AS count
+        FROM
+        (
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 0 DAY ) days UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 1 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 2 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 3 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 4 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 5 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 6 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 7 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 8 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 9 DAY )) spo
+        LEFT JOIN message_info oi ON (
+        DATE_FORMAT( oi.create_date, '%Y-%m-%d' ) = DATE_FORMAT( spo.days, '%Y-%m-%d' )
+        <if test="userId != null">
+            AND oi.send_user = #{userId}
+        </if>
+        )
+        GROUP BY
+        days
+        ORDER BY
+        days ASC
+    </select>
 </mapper>

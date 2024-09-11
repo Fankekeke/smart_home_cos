@@ -7,11 +7,11 @@
             <a-col :span="6">
               <a-card hoverable>
                 <a-row>
-                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本月出库数量</a-col>
+                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本月上报数量</a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
                   <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
                     {{ titleData.incomeMonth }}
-                    <span style="font-size: 20px;margin-top: 3px">元</span>
+                    <span style="font-size: 20px;margin-top: 3px">条</span>
                   </a-col>
                 </a-row>
               </a-card>
@@ -19,11 +19,11 @@
             <a-col :span="6">
               <a-card hoverable>
                 <a-row>
-                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本月出库收益</a-col>
+                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本月报警数量</a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
                   <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
                     {{ titleData.workOrderMonth }}
-                    <span style="font-size: 20px;margin-top: 3px">单</span>
+                    <span style="font-size: 20px;margin-top: 3px">条</span>
                   </a-col>
                 </a-row>
               </a-card>
@@ -31,11 +31,11 @@
             <a-col :span="6">
               <a-card hoverable>
                 <a-row>
-                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本月入库数量</a-col>
+                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本年上报数量</a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
                   <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
                     {{ titleData.incomeYear }}
-                    <span style="font-size: 20px;margin-top: 3px">单</span>
+                    <span style="font-size: 20px;margin-top: 3px">条</span>
                   </a-col>
                 </a-row>
               </a-card>
@@ -43,11 +43,11 @@
             <a-col :span="6">
               <a-card hoverable>
                 <a-row>
-                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本月入库支出</a-col>
+                  <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本年报警数量</a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
                   <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
                     {{ titleData.workOrderYear }}
-                    <span style="font-size: 20px;margin-top: 3px">单</span>
+                    <span style="font-size: 20px;margin-top: 3px">条</span>
                   </a-col>
                 </a-row>
               </a-card>
@@ -70,76 +70,22 @@
         </a-card>
       </a-col>
     </a-row>
-    <a-row style="margin-top: 15px" v-if="user.roleId == 74 || user.roleId == 76">
-      <a-col :span="12">
-        <a-card hoverable :bordered="false" style="width: 100%">
-          <a-skeleton active v-if="loading" />
-          <apexchart  v-if="!loading" type="line" height="300" :options="chartOptions2" :series="series2"></apexchart>
-        </a-card>
-      </a-col>
-      <a-col :span="12">
-        <a-card hoverable :bordered="false" style="width: 100%">
-          <a-skeleton active v-if="loading" />
-          <apexchart v-if="!loading" type="bar" height="300" :options="chartOptions3" :series="series3"></apexchart>
-        </a-card>
-      </a-col>
-    </a-row>
-    <a-col :span="24">
-      <div style="background: #ECECEC; padding: 30px;" v-if="user.roleId == 74 || user.roleId == 76">
-        <a-row :gutter="16">
-          <a-col :span="6">
-            <a-card hoverable>
-              <a-row>
-                <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本年出库数量</a-col>
-                <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
-                <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
-                  {{ titleData.incomeMonth }}
-                  <span style="font-size: 20px;margin-top: 3px">元</span>
-                </a-col>
-              </a-row>
-            </a-card>
-          </a-col>
-          <a-col :span="6">
-            <a-card hoverable>
-              <a-row>
-                <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本年出库收益</a-col>
-                <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
-                <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
-                  {{ titleData.workOrderMonth }}
-                  <span style="font-size: 20px;margin-top: 3px">单</span>
-                </a-col>
-              </a-row>
-            </a-card>
-          </a-col>
-          <a-col :span="6">
-            <a-card hoverable>
-              <a-row>
-                <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本年入库数量</a-col>
-                <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
-                <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
-                  {{ titleData.incomeYear }}
-                  <span style="font-size: 20px;margin-top: 3px">单</span>
-                </a-col>
-              </a-row>
-            </a-card>
-          </a-col>
-          <a-col :span="6">
-            <a-card hoverable>
-              <a-row>
-                <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本年入库支出</a-col>
-                <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
-                <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
-                  {{ titleData.workOrderYear }}
-                  <span style="font-size: 20px;margin-top: 3px">单</span>
-                </a-col>
-              </a-row>
-            </a-card>
-          </a-col>
-        </a-row>
-      </div>
-    </a-col>
+<!--    <a-row style="margin-top: 15px" v-if="user.roleId == 74 || user.roleId == 76">-->
+<!--      <a-col :span="12">-->
+<!--        <a-card hoverable :bordered="false" style="width: 100%">-->
+<!--          <a-skeleton active v-if="loading" />-->
+<!--          <apexchart  v-if="!loading" type="line" height="300" :options="chartOptions2" :series="series2"></apexchart>-->
+<!--        </a-card>-->
+<!--      </a-col>-->
+<!--      <a-col :span="12">-->
+<!--        <a-card hoverable :bordered="false" style="width: 100%">-->
+<!--          <a-skeleton active v-if="loading" />-->
+<!--          <apexchart v-if="!loading" type="bar" height="300" :options="chartOptions3" :series="series3"></apexchart>-->
+<!--        </a-card>-->
+<!--      </a-col>-->
+<!--    </a-row>-->
     <a-row style="margin-top: 15px">
-      <a-col :span="12">
+      <a-col :span="24">
         <a-card hoverable :loading="loading" :bordered="false" title="公告信息" style="margin-top: 15px">
           <div style="padding: 0 22px">
             <a-list item-layout="vertical" :pagination="pagination" :data-source="bulletinList">
@@ -182,14 +128,10 @@ export default {
       },
       bulletinList: [],
       titleData: {
-        monthOutNum: 0,
-        monthOutPrice: 0,
-        yearOutNum: 0,
-        yearOutPrice: 0,
-        monthPutNum: 0,
-        monthPutPrice: 0,
-        yearPutNum: 0,
-        yearPutPrice: 0
+        monthNum: 0,
+        monthAlertNum: 0,
+        yearNum: 0,
+        yearAlertNum: 0
       },
       loading: false,
       series: [{
@@ -345,41 +287,37 @@ export default {
   },
   methods: {
     selectHomeData () {
-      this.$get('/cos/order-info/homeData').then((r) => {
-        let titleData = { outNum: r.data.outNum, putNum: r.data.putNum, orderPrice: r.data.orderPrice, registerNum: r.data.registerNum }
+      this.$get('/cos/device-type/homeData').then((r) => {
+        let titleData = { userNum: r.data.userNum, deviceNum: r.data.deviceNum, historyNum: r.data.historyNum, alertNum: r.data.alertNum }
         this.$emit('setTitle', titleData)
-        this.titleData.monthOutNum = r.data.monthOutNum
-        this.titleData.monthOutPrice = r.data.monthOutPrice
-        this.titleData.yearOutNum = r.data.yearOutNum
-        this.titleData.yearOutPrice = r.data.yearOutPrice
+        this.titleData.monthNum = r.data.monthNum
+        this.titleData.monthAlertNum = r.data.monthAlertNum
+        this.titleData.yearNum = r.data.yearNum
+        this.titleData.yearAlertNum = r.data.yearAlertNum
 
-        this.titleData.monthPutNum = r.data.monthPutNum
-        this.titleData.monthPutPrice = r.data.monthPutPrice
-        this.titleData.yearPutNum = r.data.yearPutNum
-        this.titleData.yearPutPrice = r.data.yearPutPrice
         this.bulletinList = r.data.bulletin
         let values = []
-        if (r.data.orderNumWithinDays !== null && r.data.orderNumWithinDays.length !== 0) {
+        if (r.data.numDayList !== null && r.data.numDayList.length !== 0) {
           if (this.chartOptions1.xaxis.categories.length === 0) {
-            this.chartOptions1.xaxis.categories = r.data.orderNumWithinDays.map(obj => { return obj.days })
+            this.chartOptions1.xaxis.categories = r.data.numDayList.map(obj => { return obj.days })
           }
-          let itemData = { name: '出库统计', data: r.data.orderNumWithinDays.map(obj => { return obj.count }) }
+          let itemData = { name: '统计', data: r.data.numDayList.map(obj => { return obj.count }) }
           values.push(itemData)
           this.series1 = values
         }
-        this.series[0].data = r.data.orderPriceWithinDays.map(obj => { return obj.price })
-        this.chartOptions.xaxis.categories = r.data.orderPriceWithinDays.map(obj => { return obj.days })
+        this.series[0].data = r.data.alertDayList.map(obj => { return obj.count })
+        this.chartOptions.xaxis.categories = r.data.alertDayList.map(obj => { return obj.days })
 
-        if (r.data.putNumWithinDays !== null && r.data.putNumWithinDays.length !== 0) {
-          if (this.chartOptions2.xaxis.categories.length === 0) {
-            this.chartOptions2.xaxis.categories = r.data.putNumWithinDays.map(obj => { return obj.days })
-          }
-          let itemData = { name: '出库统计', data: r.data.putNumWithinDays.map(obj => { return obj.count }) }
-          values.push(itemData)
-          this.series2 = values
-        }
-        this.series3[0].data = r.data.putPriceWithinDays.map(obj => { return obj.price })
-        this.chartOptions3.xaxis.categories = r.data.putPriceWithinDays.map(obj => { return obj.days })
+        // if (r.data.putNumWithinDays !== null && r.data.putNumWithinDays.length !== 0) {
+        //   if (this.chartOptions2.xaxis.categories.length === 0) {
+        //     this.chartOptions2.xaxis.categories = r.data.putNumWithinDays.map(obj => { return obj.days })
+        //   }
+        //   let itemData = { name: '出库统计', data: r.data.putNumWithinDays.map(obj => { return obj.count }) }
+        //   values.push(itemData)
+        //   this.series2 = values
+        // }
+        // this.series3[0].data = r.data.putPriceWithinDays.map(obj => { return obj.price })
+        // this.chartOptions3.xaxis.categories = r.data.putPriceWithinDays.map(obj => { return obj.days })
       })
     }
   }

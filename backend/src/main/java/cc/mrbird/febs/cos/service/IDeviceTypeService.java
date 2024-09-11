@@ -23,4 +23,11 @@ public interface IDeviceTypeService extends IService<DeviceType> {
      * @return 结果
      */
     IPage<LinkedHashMap<String, Object>> selectDeviceTypePage(Page<DeviceType> page, DeviceType deviceType);
+
+    /**
+     * 获取首页统计数据
+     *
+     * @return 结果
+     */
+    LinkedHashMap<String, Object> homeData();
 }

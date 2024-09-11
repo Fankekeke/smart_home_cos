@@ -38,6 +38,16 @@ public class DeviceTypeController {
     }
 
     /**
+     * 获取首页统计数据
+     *
+     * @return 结果
+     */
+    @GetMapping("/homeData")
+    public R homeData() {
+        return R.ok(deviceTypeService.homeData());
+    }
+
+    /**
      * 查询设备类型信息详情
      *
      * @param id 主键ID
