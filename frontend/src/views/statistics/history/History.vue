@@ -1,39 +1,48 @@
 <template>
   <div style="width: 100%">
     <a-row style="margin-top: 25px">
-      <a-col :span="24" style="margin-top: 25px">
-        <div style="background:#ECECEC; padding:30px">
-          <a-skeleton :loading="loading" active :paragraph="{ rows: 10 }"/>
-          <a-alert v-if="!loading" message="设备在线统计" type="info" close-text="Close Now" style="margin-bottom: 15px"/>
-          <a-row :gutter="15" v-if="!loading">
-            <a-col :span="6" v-for="(item, index) in dataList" style="margin-bottom: 15px" :key="index">
-              <a-card :bordered="false" hoverable :description="item.address">
-                <span slot="title">
-                  <a-badge status="processing"/>
-                  {{ item.name }} <span style="color: #fa541c">{{ item.code }}</span>
-                </span>
-                <a-row>
-                  <a-col :span="24" style="font-size: 13px;font-family: SimHei">
-                    <div>设备类型：{{ item.typeName }}</div>
-                    <div style="margin-top: 10px">所属用户：{{ item.userName }}</div>
-                    <div style="margin-top: 10px">
+      <a-col :span="24">
+        <a-skeleton :loading="loading" active :paragraph="{ rows: 10 }"/>
+        <a-alert v-if="!loading" message="设备上报历史统计" type="info" close-text="Close Now" style="margin-bottom: 15px"/>
+        <a-row :gutter="15" v-if="!loading">
+          <a-col :span="6">
+            <a-list :data-source="dataList" bordered>
+              <a-list-item slot="renderItem" slot-scope="item, index">
+                <a-list-item-meta>
+                  <a slot="title" @click="selectHistoryByDevice(item.id)">{{ item.name }} <span style="font-size: 13px">{{ item.code }}</span></a>
+                  <div slot="description" style="font-size: 13px">
+                    <div style="margin-top: 10px">设备类型：{{ item.typeName }}</div>
+                    <div style="margin-top: 8px">所属用户：{{ item.userName }}</div>
+                    <div style="margin-top: 8px">
                       <a-row :gutter="8">
-                        <a-col :span="16">
+                        <a-col :span="20">
                           上次在线时间：{{ item.lastOpenDate ? item.lastOpenDate : '- -' }}
                         </a-col>
-                        <a-col :span="8">
-                          <a-tag size="mini" v-if="item.openFlag == 0" color="pink">开</a-tag>
-                          <a-tag size="mini" v-if="item.openFlag == 1" color="blue">关</a-tag>
+                        <a-col :span="4">
+                          <a-tag size="mini" v-if="item.openFlag == 0" color="pink">状态：关</a-tag>
+                          <a-tag size="mini" v-if="item.openFlag == 1" color="blue">状态：开</a-tag>
                         </a-col>
                       </a-row>
                     </div>
-                  </a-col>
-                </a-row>
+                  </div>
+                </a-list-item-meta>
+<!--                <a-row :gutter="15">-->
+<!--                  <a-col :span="24" style="font-size: 13px;font-family: SimHei">-->
+<!--                    -->
+<!--                  </a-col>-->
+<!--                </a-row>-->
+              </a-list-item>
+            </a-list>
+          </a-col>
+          <a-col :span="18">
+            <div style="background:#ECECEC; padding: 30px">
+              <a-card hoverable :bordered="false" style="width: 100%">
+                <a-skeleton active v-if="loading" />
+                <apexchart v-if="!loading" type="bar" height="300" :options="chartOptions1" :series="series1"></apexchart>
               </a-card>
-            </a-col>
-          </a-row>
-          <a-pagination show-quick-jumper :defaultCurrent="page.current" :total="page.total" :defaultPageSize="page.size" showLessItems @change="pageChange"/>
-        </div>
+            </div>
+          </a-col>
+        </a-row>
       </a-col>
     </a-row>
   </div>
@@ -47,7 +56,7 @@ export default {
       page: {
         current: 1,
         total: 0,
-        size: 36
+        size: 999
       },
       dataList: [],
       deviceList: [],
@@ -68,6 +77,49 @@ export default {
         xaxis: {
           categories: ['January', 'February', 'March', 'April', 'May', 'June']
         }
+      },
+      series1: [],
+      chartOptions1: {
+        chart: {
+          type: 'bar',
+          height: 300
+        },
+        title: {
+          text: '本日数据统计',
+          align: 'left'
+        },
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: '55%'
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          show: true,
+          width: 2,
+          colors: ['transparent']
+        },
+        xaxis: {
+          categories: []
+        },
+        yaxis: {
+          title: {
+            text: ''
+          }
+        },
+        fill: {
+          opacity: 1
+        },
+        tooltip: {
+          y: {
+            formatter: function (val) {
+              return val + ' 条'
+            }
+          }
+        }
       }
     }
   },
@@ -80,6 +132,19 @@ export default {
     this.fetch()
   },
   methods: {
+    selectHistoryByDevice (deviceId) {
+      this.$get(`/cos/device-history-info/selectHistoryByDevice`, {deviceId}).then((r) => {
+        let values = []
+        if (r.data.data !== null && r.data.data.length !== 0) {
+          if (this.chartOptions1.xaxis.categories.length === 0) {
+            this.chartOptions1.xaxis.categories = r.data.data.map(obj => { return obj.date })
+          }
+          let itemData = { name: '统计', data: r.data.data.map(obj => { return obj.value }) }
+          values.push(itemData)
+          this.series1 = values
+        }
+      })
+    },
     selectDeviceList () {
       this.$get(`/cos/device-info/list`).then((r) => {
         this.deviceList = r.data.data

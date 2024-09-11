@@ -22,8 +22,8 @@
                           上次在线时间：{{ item.lastOpenDate ? item.lastOpenDate : '- -' }}
                         </a-col>
                         <a-col :span="8">
-                          <a-tag size="mini" v-if="item.openFlag == 0" color="pink">开</a-tag>
-                          <a-tag size="mini" v-if="item.openFlag == 1" color="blue">关</a-tag>
+                          <a-tag size="mini" v-if="item.openFlag == 0" color="pink">关</a-tag>
+                          <a-tag size="mini" v-if="item.openFlag == 1" color="blue">开</a-tag>
                         </a-col>
                       </a-row>
                     </div>

@@ -31,14 +31,10 @@
         from device_history_info
         where 1 = 1
         <if test="year != null">
-            AND DATE_FORMAT( device_history_info.create_date, '%Y' ) = DATE_FORMAT(
-            #{year},
-            '%Y')
+            AND DATE_FORMAT( device_history_info.create_date, '%Y' ) = #{year}
         </if>
         <if test="month != null">
-            AND DATE_FORMAT( device_history_info.create_date, '%m' ) = DATE_FORMAT(
-            #{month},
-            '%m')
+            AND DATE_FORMAT( device_history_info.create_date, '%m' ) = #{month}
         </if>
     </select>
 
@@ -48,14 +44,10 @@
         from message_info
         where 1 = 1
         <if test="year != null">
-            AND DATE_FORMAT( message_info.create_date, '%Y' ) = DATE_FORMAT(
-            #{year},
-            '%Y')
+            AND DATE_FORMAT( message_info.create_date, '%Y' ) = #{year}
         </if>
         <if test="month != null">
-            AND DATE_FORMAT( message_info.create_date, '%m' ) = DATE_FORMAT(
-            #{month},
-            '%m')
+            AND DATE_FORMAT( message_info.create_date, '%m' ) = #{month}
         </if>
     </select>
 
@@ -91,7 +83,6 @@
         <if test="userId != null">
             AND oi.user_id = #{userId}
         </if>
-        AND oi.status != '0'
         )
         GROUP BY
         days

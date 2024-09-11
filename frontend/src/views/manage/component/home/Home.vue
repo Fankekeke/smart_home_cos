@@ -10,7 +10,7 @@
                   <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本月上报数量</a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
                   <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
-                    {{ titleData.incomeMonth }}
+                    {{ titleData.monthNum }}
                     <span style="font-size: 20px;margin-top: 3px">条</span>
                   </a-col>
                 </a-row>
@@ -22,7 +22,7 @@
                   <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本月报警数量</a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
                   <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
-                    {{ titleData.workOrderMonth }}
+                    {{ titleData.monthAlertNum }}
                     <span style="font-size: 20px;margin-top: 3px">条</span>
                   </a-col>
                 </a-row>
@@ -34,7 +34,7 @@
                   <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本年上报数量</a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
                   <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
-                    {{ titleData.incomeYear }}
+                    {{ titleData.yearNum }}
                     <span style="font-size: 20px;margin-top: 3px">条</span>
                   </a-col>
                 </a-row>
@@ -46,7 +46,7 @@
                   <a-col :span="24" style="font-size: 13px;margin-bottom: 8px;font-family: SimHei">本年报警数量</a-col>
                   <a-col :span="4"><a-icon type="arrow-up" style="font-size: 30px;margin-top: 3px"/></a-col>
                   <a-col :span="18" style="font-size: 28px;font-weight: 500;font-family: SimHei">
-                    {{ titleData.workOrderYear }}
+                    {{ titleData.yearAlertNum }}
                     <span style="font-size: 20px;margin-top: 3px">条</span>
                   </a-col>
                 </a-row>
@@ -135,7 +135,7 @@ export default {
       },
       loading: false,
       series: [{
-        name: '收益',
+        name: '条',
         data: []
       }],
       chartOptions: {
@@ -153,7 +153,7 @@ export default {
           enabled: false
         },
         title: {
-          text: '近十天收入统计',
+          text: '近十天报警统计',
           align: 'left'
         },
         markers: {
@@ -169,7 +169,7 @@ export default {
           height: 300
         },
         title: {
-          text: '近十天工单统计',
+          text: '近十天数据统计',
           align: 'left'
         },
         plotOptions: {
@@ -200,13 +200,13 @@ export default {
         tooltip: {
           y: {
             formatter: function (val) {
-              return val + ' 单'
+              return val + ' 条'
             }
           }
         }
       },
       series2: [{
-        name: '收益',
+        name: '条',
         data: []
       }],
       chartOptions2: {
@@ -224,7 +224,7 @@ export default {
           enabled: false
         },
         title: {
-          text: '近十天收入统计',
+          text: '近十天报警统计',
           align: 'left'
         },
         markers: {
@@ -240,7 +240,7 @@ export default {
           height: 300
         },
         title: {
-          text: '近十天工单统计',
+          text: '近十天统计',
           align: 'left'
         },
         plotOptions: {
@@ -271,7 +271,7 @@ export default {
         tooltip: {
           y: {
             formatter: function (val) {
-              return val + ' 单'
+              return val + ' 条'
             }
           }
         }

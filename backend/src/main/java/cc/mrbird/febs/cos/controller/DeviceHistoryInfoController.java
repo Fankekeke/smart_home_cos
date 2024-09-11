@@ -58,7 +58,7 @@ public class DeviceHistoryInfoController {
      * @return 结果
      */
     @GetMapping("/selectHistoryByDevice")
-    public R selectRateByDeviceId(Integer deviceId, String date) {
+    public R selectRateByDeviceId(@RequestParam("deviceId") Integer deviceId, @RequestParam(value = "date", required = false) String date) {
         return R.ok(deviceHistoryInfoService.selectRateByDeviceId(deviceId, date));
     }
 

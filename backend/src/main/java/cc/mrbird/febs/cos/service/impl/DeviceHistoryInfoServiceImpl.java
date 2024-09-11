@@ -4,16 +4,16 @@ import cc.mrbird.febs.cos.entity.DeviceHistoryInfo;
 import cc.mrbird.febs.cos.dao.DeviceHistoryInfoMapper;
 import cc.mrbird.febs.cos.service.IDeviceHistoryInfoService;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -45,11 +45,14 @@ public class DeviceHistoryInfoServiceImpl extends ServiceImpl<DeviceHistoryInfoM
      */
     @Override
     public List<LinkedHashMap<String, Object>> selectRateByDeviceId(Integer deviceId, String date) {
+        if (StrUtil.isEmpty(date)) {
+            date = DateUtil.formatDate(new Date());
+        }
         List<DeviceHistoryInfo> historyList = baseMapper.selectRateByDeviceId(deviceId, date);
         Map<Integer, List<DeviceHistoryInfo>> historyMap = historyList.stream().collect(Collectors.groupingBy(DeviceHistoryInfo::getHour));
         // 返回数据
         List<LinkedHashMap<String, Object>> resultList = new ArrayList<>();
-        for (int i = 0; i <= 24 ; i++) {
+        for (int i = 0; i < 24 ; i++) {
             List<DeviceHistoryInfo> itemList = historyMap.get(i);
             BigDecimal value = BigDecimal.ZERO;
             if (CollectionUtil.isNotEmpty(itemList)) {
@@ -60,7 +63,7 @@ public class DeviceHistoryInfoServiceImpl extends ServiceImpl<DeviceHistoryInfoM
             LinkedHashMap<String, Object> item = new LinkedHashMap<String, Object>() {
                 {
                     put("date", finalI + "时");
-                    put("value", finalValue);
+                    put("value", NumberUtil.round(finalValue, 0));
                 }
             };
             resultList.add(item);

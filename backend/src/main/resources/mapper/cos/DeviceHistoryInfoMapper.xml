@@ -57,7 +57,7 @@
         where
         1 = 1
         and dhi.device_id = #{deviceId}
-        and dhi.create_date BETWEEN CONCAT(#{date}, '00:00:00') AND CONCAT(#{date}, '23:59:59')
+        and dhi.create_date BETWEEN CONCAT(#{date}, ' 00:00:00') AND CONCAT(#{date}, ' 23:59:59')
         order by
         dhi.create_date desc
     </select>

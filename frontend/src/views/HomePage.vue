@@ -19,16 +19,16 @@
               <a-col :span="4"></a-col>
               <a-col :span="4"></a-col>
               <a-col :span="4">
-                <head-info title="总订单" :content="titleData.registerNum" :center="false" :bordered="false"/>
+                <head-info title="用户数量" :content="titleData.userNum" :center="false" :bordered="false"/>
               </a-col>
               <a-col :span="4">
-                <head-info title="总收益" :content="titleData.orderPrice" :center="false" :bordered="false"/>
+                <head-info title="设备数量" :content="titleData.deviceNum" :center="false" :bordered="false"/>
               </a-col>
               <a-col :span="4">
-                <head-info title="出库数量" :content="titleData.outNum" :center="false" :bordered="false"/>
+                <head-info title="上报数量" :content="titleData.historyNum" :center="false" :bordered="false"/>
               </a-col>
               <a-col :span="4">
-                <head-info title="入库数量" :content="titleData.putNum" :center="false"/>
+                <head-info title="报警数量" :content="titleData.alertNum" :center="false"/>
               </a-col>
             </a-row>
           </div>

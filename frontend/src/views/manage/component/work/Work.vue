@@ -1,193 +1,192 @@
 <template>
-  <a-card :bordered="false" class="card-area">
-    <div style="width: 100%">
-      <a-col :span="22" v-if="newsList.length > 0">
-        <a-alert
-          banner
-          :message="newsContent"
-          type="info"
-        />
-      </a-col>
-      <a-col :span="2">
-        <a-button type="primary" style="margin-top: 2px;margin-left: 10px" @click="newsNext">下一页</a-button>
-      </a-col>
-    </div>
-    <br/>
-    <br/>
-    <a-row :gutter="30" v-if="userInfo != null">
-      <a-col :span="6">
-        <a-card :bordered="false">
-          <span slot="title">
-            <a-icon type="user" style="margin-right: 10px" />
-            <span>用户信息</span>
-          </span>
-          <div>
-            <a-avatar :src="'http://127.0.0.1:9527/imagesWeb/' + userInfo.images" shape="square" style="width: 100px;height: 100px;float: left;margin: 10px 0 10px 10px" />
-            <div style="float: left;margin-left: 20px;margin-top: 8px">
-              <span style="font-size: 20px;font-family: SimHei">{{ userInfo.name }}</span>
-              <span style="font-size: 14px;font-family: SimHei">{{ userInfo.code }}</span>
+  <div style="width: 100%">
+    <a-row style="margin-top: 25px">
+      <a-col :span="24">
+        <a-skeleton :loading="loading" active :paragraph="{ rows: 10 }"/>
+        <a-alert v-if="!loading" message="设备上报历史统计" type="info" close-text="Close Now" style="margin-bottom: 15px"/>
+        <a-row :gutter="15" v-if="!loading">
+          <a-col :span="7">
+            <a-list :data-source="dataList" bordered>
+              <a-list-item slot="renderItem" slot-scope="item, index">
+                <a-list-item-meta>
+                  <a slot="title" @click="selectHistoryByDevice(item.id)">{{ item.name }} <span style="font-size: 13px">{{ item.code }}</span></a>
+                  <div slot="description" style="font-size: 13px">
+                    <div style="margin-top: 10px">设备类型：{{ item.typeName }}</div>
+                    <div style="margin-top: 8px">所属用户：{{ item.userName }}</div>
+                    <div style="margin-top: 8px">
+                      <a-row :gutter="8">
+                        <a-col :span="20">
+                          上次在线时间：{{ item.lastOpenDate ? item.lastOpenDate : '- -' }}
+                        </a-col>
+                        <a-col :span="4">
+                          <a-tag size="mini" v-if="item.openFlag == 0" color="pink">状态：关</a-tag>
+                          <a-tag size="mini" v-if="item.openFlag == 1" color="blue">状态：开</a-tag>
+                        </a-col>
+                      </a-row>
+                    </div>
+                  </div>
+                </a-list-item-meta>
+                <!--                <a-row :gutter="15">-->
+                <!--                  <a-col :span="24" style="font-size: 13px;font-family: SimHei">-->
+                <!--                    -->
+                <!--                  </a-col>-->
+                <!--                </a-row>-->
+              </a-list-item>
+            </a-list>
+          </a-col>
+          <a-col :span="17">
+            <div style="background:#ECECEC; padding: 30px">
+              <a-card hoverable :bordered="false" style="width: 100%">
+                <a-skeleton active v-if="loading" />
+                <apexchart v-if="!loading" type="bar" height="300" :options="chartOptions1" :series="series1"></apexchart>
+              </a-card>
             </div>
-            <div style="float: left;margin-left: 20px;margin-top: 8px">
-              <span style="font-size: 14px;font-family: SimHei">电话：{{ userInfo.phone == null ? '- -' : userInfo.phone }}</span>
-            </div>
-            <div style="float: left;margin-left: 20px;margin-top: 8px">
-              <span style="font-size: 14px;font-family: SimHei">邮箱：{{ userInfo.email == null ? '- -' : userInfo.email }}</span>
-            </div>
-          </div>
-        </a-card>
+          </a-col>
+        </a-row>
       </a-col>
     </a-row>
-    <div style="background:#ECECEC; padding:30px;margin-top: 30px;margin-bottom: 30px">
-      <a-row :gutter="30">
-        <a-col :span="6" v-for="(item, index) in statusList" :key="index">
-          <div style="background: #e8e8e8">
-            <a-carousel autoplay style="height: 150px;" v-if="item.images !== undefined && item.images !== ''">
-              <div style="width: 100%;height: 150px" v-for="(item, index) in item.images.split(',')" :key="index">
-                <img :src="'http://127.0.0.1:9527/imagesWeb/'+item" style="width: 100%;height: 150px">
-              </div>
-            </a-carousel>
-            <a-card :bordered="false">
-              <span slot="title">
-                <span style="font-size: 14px;font-family: SimHei">
-                  {{ item.spaceName }} | {{ item.spaceAddress }}
-                  <span style="margin-left: 15px;color: orange" v-if="item.status == -1">预约中</span>
-                  <span style="margin-left: 15px;color: green" v-if="item.status == 0">空闲</span>
-                  <span style="margin-left: 15px;color: red" v-if="item.status == 1">出租中</span>
-                  <a style="text-align: right;margin-left: 10px" v-if="item.status == 0" @click="showModal(item)"><a-icon type="paper-clip" />下单</a>
-                </span>
-              </span>
-            </a-card>
-          </div>
-        </a-col>
-      </a-row>
-      <a-modal
-        title="选择停车车辆"
-        :visible="visible"
-        @ok="reserveSpace"
-        @cancel="handleCancel"
-      >
-        <a-form :form="form" layout="vertical">
-          <a-row :gutter="20">
-            <a-col :span="12">
-              <a-form-item label='车辆信息' v-bind="formItemLayout">
-                <a-radio-group button-style="solid" v-decorator="[
-                    'vehicleId',
-                    {rules: [{ required: true, message: '请选择车辆' }]}
-                  ]">
-                  <a-radio-button :value="item.id" v-for="(item, index) in vehicleList" :key="index">
-                    {{ item.vehicleNumber }}
-                  </a-radio-button>
-                </a-radio-group>
-              </a-form-item>
-            </a-col>
-            <a-col :span="24">
-              <a-form-item label='租赁结束时间' v-bind="formItemLayout">
-                <a-date-picker
-                  show-time
-                  format="YYYY-MM-DD HH:mm:ss"
-                  placeholder="选择时间"
-                  style="width: 100%"
-                  v-decorator="[
-                    'endDate',
-                    {rules: [{ required: true, message: '请选择时间' }]}
-                  ]"
-                />
-              </a-form-item>
-            </a-col>
-          </a-row>
-        </a-form>
-      </a-modal>
-    </div>
-  </a-card>
+  </div>
 </template>
 
 <script>
 import {mapState} from 'vuex'
-import moment from 'moment'
-moment.locale('zh-cn')
 
-const formItemLayout = {
-  labelCol: { span: 24 },
-  wrapperCol: { span: 24 }
-}
 export default {
-  name: 'Work',
-  data () {
-    return {
-      form: this.$form.createForm(this),
-      formItemLayout,
-      visible: false,
-      statusList: [],
-      vehicleList: [],
-      newsContent: '',
-      newsPage: 0,
-      loading: false,
-      userInfo: null,
-      memberInfo: null,
-      spaceInfo: null,
-      newsList: []
-    }
-  },
+  name: 'House',
   computed: {
     ...mapState({
       currentUser: state => state.account.user
     })
   },
+  data () {
+    return {
+      page: {
+        current: 1,
+        total: 0,
+        size: 999
+      },
+      dataList: [],
+      deviceList: [],
+      loading: false,
+      checkFlag: '1',
+      series: [{
+        name: 'Series 1',
+        data: [80, 50, 30, 40, 100, 20]
+      }],
+      chartOptions: {
+        chart: {
+          height: 350,
+          type: 'radar'
+        },
+        title: {
+          text: 'Basic Radar Chart'
+        },
+        xaxis: {
+          categories: ['January', 'February', 'March', 'April', 'May', 'June']
+        }
+      },
+      series1: [],
+      chartOptions1: {
+        chart: {
+          type: 'bar',
+          height: 300
+        },
+        title: {
+          text: '本日数据统计',
+          align: 'left'
+        },
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: '55%'
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          show: true,
+          width: 2,
+          colors: ['transparent']
+        },
+        xaxis: {
+          categories: []
+        },
+        yaxis: {
+          title: {
+            text: ''
+          }
+        },
+        fill: {
+          opacity: 1
+        },
+        tooltip: {
+          y: {
+            formatter: function (val) {
+              return val + ' 条'
+            }
+          }
+        }
+      }
+    }
+  },
+  watch: {
+    checkFlag: function (value) {
+      this.selectSchoolRate(value)
+    }
+  },
   mounted () {
-    this.getWorkStatusList()
-    this.selectMemberByUserId()
-    this.selectVehicleByUserId()
+    this.fetch()
   },
   methods: {
-    newsNext () {
-      if (this.newsPage + 1 === this.newsList.length) {
-        this.newsPage = 0
-      } else {
-        this.newsPage += 1
-      }
-      this.newsContent = `《${this.newsList[this.newsPage].title}》 ${this.newsList[this.newsPage].content}`
-    },
-    showModal (row) {
-      this.spaceInfo = row
-      this.visible = true
-    },
-    handleCancel (e) {
-      console.log('Clicked cancel button')
-      this.visible = false
-    },
-    selectVehicleByUserId () {
-      this.$get(`/cos/vehicle-info/user/${this.currentUser.userId}`).then((r) => {
-        this.vehicleList = r.data.data
-      })
-    },
-    reserveSpace () {
-      this.form.validateFields((err, values) => {
-        if (!err) {
-          values.spaceId = this.spaceInfo.id
-          values.endDate = moment(values.endDate).format('YYYY-MM-DD HH:mm:ss')
-          this.$post('/cos/park-order-info/orderAdd', {
-            ...values
-          }).then((r) => {
-            this.$message.success('下单成功！请前往我的订单进行支付')
-            this.visible = false
-            this.getWorkStatusList()
-          })
+    selectHistoryByDevice (deviceId) {
+      this.$get(`/cos/device-history-info/selectHistoryByDevice`, {deviceId}).then((r) => {
+        let values = []
+        if (r.data.data !== null && r.data.data.length !== 0) {
+          if (this.chartOptions1.xaxis.categories.length === 0) {
+            this.chartOptions1.xaxis.categories = r.data.data.map(obj => { return obj.date })
+          }
+          let itemData = { name: '统计', data: r.data.data.map(obj => { return obj.value }) }
+          values.push(itemData)
+          this.series1 = values
         }
       })
     },
-    selectMemberByUserId () {
-      this.$get(`/cos/member-info/member/${this.currentUser.userId}`).then((r) => {
-        this.userInfo = r.data.user
-        this.memberInfo = r.data.member
-        this.newsList = r.data.bulletin
-        if (this.newsList.length !== 0) {
-          this.newsContent = `《${this.newsList[0].title}》 ${this.newsList[0].content}`
-        }
+    selectDeviceList () {
+      this.$get(`/cos/device-info/list`).then((r) => {
+        this.deviceList = r.data.data
+        this.loading = false
       })
     },
-    getWorkStatusList () {
-      this.$get(`/cos/space-status-info/status/list`).then((r) => {
-        this.statusList = r.data.data
+    selectSchoolRate (type) {
+      this.loading = true
+      this.$get(`/cos/score-line-info/selectSchoolRate/type/${type}`).then((r) => {
+        this.dataList = r.data.data
+        this.loading = false
+      })
+    },
+    pageChange (page, pageSize) {
+      this.page.size = pageSize
+      this.page.current = page
+      this.fetch()
+    },
+    fetch (params = {}) {
+      // 显示loading
+      this.loading = true
+      // 如果分页信息为空，则设置为默认值
+      params.size = this.page.size
+      params.current = this.page.current
+      params.userId = this.currentUser.userId
+      this.$get('/cos/device-info/page', {
+        ...params
+      }).then((r) => {
+        let data = r.data.data
+        const pagination = {...this.pagination}
+        pagination.total = data.total
+        this.dataList = data.records
+        this.page = pagination
+        // 数据加载完毕，关闭loading
+        this.loading = false
       })
     }
   }
@@ -195,31 +194,12 @@ export default {
 </script>
 
 <style scoped>
->>> .ant-card-meta-title {
-  font-size: 13px;
-  font-family: SimHei;
-}
->>> .ant-card-meta-description {
-  font-size: 12px;
-  font-family: SimHei;
-}
->>> .ant-divider-with-text-left {
-  margin: 0;
-}
-
 >>> .ant-card-head-title {
   font-size: 13px;
   font-family: SimHei;
 }
->>> .ant-card-extra {
-  font-size: 13px;
+>>> .ant-alert-message {
+  font-size: 14px;
   font-family: SimHei;
 }
-.ant-carousel >>> .slick-slide {
-  text-align: center;
-  height: 250px;
-  line-height: 250px;
-  overflow: hidden;
-}
-
 </style>
