@@ -9,58 +9,19 @@
           <a-form :form="form" layout="vertical">
             <a-row :gutter="20">
               <a-col :span="12">
-                <a-form-item label='企业姓名' v-bind="formItemLayout">
+                <a-form-item label='用户编号' v-bind="formItemLayout">
+                  <a-input disabled v-decorator="[
+                  'code',
+                  { rules: [{ required: true, message: '请输入用户编号!' }] }
+                  ]"/>
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-item label='用户名称' v-bind="formItemLayout">
                   <a-input v-decorator="[
-            'name',
-            { rules: [{ required: true, message: '请输入企业姓名!' }] }
-            ]"/>
-                </a-form-item>
-              </a-col>
-              <a-col :span="12">
-                <a-form-item label='类型' v-bind="formItemLayout">
-                  <a-select v-decorator="[
-                  'type',
-                  { rules: [{ required: true, message: '请输入类型!' }] }
-                  ]">
-                    <a-select-option value="1">经销商</a-select-option>
-                    <a-select-option value="2">批发商</a-select-option>
-                    <a-select-option value="3">散客</a-select-option>
-                    <a-select-option value="4">代理商</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :span="12">
-                <a-form-item label='性别' v-bind="formItemLayout">
-                  <a-select v-decorator="[
-                  'sex',
-                  ]">
-                    <a-select-option value="1">男</a-select-option>
-                    <a-select-option value="2">女</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :span="12">
-                <a-form-item label='联系人' v-bind="formItemLayout">
-                  <a-input v-decorator="[
-            'contact',
-            { rules: [{ required: true, message: '请输入联系人!' }] }
-            ]"/>
-                </a-form-item>
-              </a-col>
-              <a-col :span="12">
-                <a-form-item label='联系方式' v-bind="formItemLayout">
-                  <a-input v-decorator="[
-            'phone',
-            { rules: [{ required: true, message: '请输入联系方式!' }] }
-            ]"/>
-                </a-form-item>
-              </a-col>
-              <a-col :span="12">
-                <a-form-item label='邮箱地址' v-bind="formItemLayout">
-                  <a-input v-decorator="[
-            'email',
-            { rules: [{ required: true, message: '请输入邮箱地址!' }] }
-            ]"/>
+                  'name',
+                  { rules: [{ required: true, message: '请输入用户名称!' }] }
+                  ]"/>
                 </a-form-item>
               </a-col>
               <a-col :span="24">
@@ -123,6 +84,14 @@
 import {mapState} from 'vuex'
 import moment from 'moment'
 moment.locale('zh-cn')
+function getBase64 (file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = error => reject(error)
+  })
+}
 const formItemLayout = {
   labelCol: { span: 24 },
   wrapperCol: { span: 24 }
@@ -203,7 +172,7 @@ export default {
     },
     setFormValues ({...user}) {
       this.rowId = user.id
-      let fields = ['name', 'email', 'phone', 'type', 'sex', 'contact', 'remark']
+      let fields = ['name', 'code', 'remark']
       let obj = {}
       Object.keys(user).forEach((key) => {
         if (key === 'images') {
