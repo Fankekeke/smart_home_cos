@@ -37,6 +37,9 @@
         <if test="operateRecordInfo.userName != null and operateRecordInfo.userName != ''">
             AND ui.name LIKE CONCAT('%',#{operateRecordInfo.userName},'%')
         </if>
+        <if test="operateRecordInfo.userId != null and operateRecordInfo.userId != ''">
+            AND ui.user_id = #{operateRecordInfo.userId}
+        </if>
         order by
         ori.create_date desc
     </select>

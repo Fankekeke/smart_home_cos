@@ -49,5 +49,8 @@ public class MessageInfo implements Serializable {
     private Integer readStatus;
 
     @TableField(exist = false)
+    private Integer userId;
+
+    @TableField(exist = false)
     private String userName;
 }

@@ -36,6 +36,9 @@
         <if test="deviceOfflineRecord.userName != null and deviceOfflineRecord.userName != ''">
             AND ui.name LIKE CONCAT('%',#{deviceOfflineRecord.userName},'%')
         </if>
+        <if test="deviceOfflineRecord.userId != null and deviceOfflineRecord.userId != ''">
+            AND ui.user_id = #{deviceOfflineRecord.userId}
+        </if>
         order by
         dor.online_date desc
     </select>

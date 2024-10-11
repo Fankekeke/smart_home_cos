@@ -72,4 +72,7 @@ public class DeviceHistoryInfo implements Serializable {
 
     @TableField(exist = false)
     private Integer month;
+
+    @TableField(exist = false)
+    private Integer userId;
 }

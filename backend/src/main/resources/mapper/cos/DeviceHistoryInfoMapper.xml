@@ -36,6 +36,9 @@
         <if test="deviceHistoryInfo.userName != null and deviceHistoryInfo.userName != ''">
             AND ui.name LIKE CONCAT('%',#{deviceHistoryInfo.userName},'%')
         </if>
+        <if test="deviceHistoryInfo.userId != null and deviceHistoryInfo.userId != ''">
+            AND ui.user_id = #{deviceHistoryInfo.userId}
+        </if>
         order by
         dhi.create_date desc
     </select>

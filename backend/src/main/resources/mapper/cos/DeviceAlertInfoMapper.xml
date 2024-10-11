@@ -30,7 +30,10 @@
             AND dt.name LIKE CONCAT('%',#{deviceAlertInfo.typeName},'%')
         </if>
         <if test="deviceAlertInfo.userName != null and deviceAlertInfo.userName != ''">
-            AND ui.name LIKE CONCAT('%',#{deviceAlertInfo.userName},'%')
+            AND user_info.name LIKE CONCAT('%',#{deviceAlertInfo.userName},'%')
+        </if>
+        <if test="deviceAlertInfo.userId != null and deviceAlertInfo.userId != ''">
+            AND user_info.user_id = #{deviceAlertInfo.userId}
         </if>
         order by device_alert_info.create_date desc
     </select>

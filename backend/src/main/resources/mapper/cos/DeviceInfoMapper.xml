@@ -39,6 +39,9 @@
         <if test="deviceInfo.onlineFlag != null and deviceInfo.onlineFlag != ''">
             AND di.online_flag = #{deviceInfo.onlineFlag}
         </if>
+        <if test="deviceInfo.userId != null and deviceInfo.userId != ''">
+            AND ui.user_id = #{deviceInfo.userId}
+        </if>
         order by
         di.create_date desc
     </select>

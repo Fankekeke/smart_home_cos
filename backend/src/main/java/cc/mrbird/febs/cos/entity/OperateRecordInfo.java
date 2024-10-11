@@ -61,4 +61,7 @@ public class OperateRecordInfo implements Serializable {
 
     @TableField(exist = false)
     private String userName;
+
+    @TableField(exist = false)
+    private String userId;
 }

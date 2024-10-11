@@ -22,6 +22,9 @@
         <if test="messageInfo.userName != null and messageInfo.userName != ''">
             AND user_info.name LIKE CONCAT('%',#{messageInfo.userName},'%')
         </if>
+        <if test="messageInfo.userId != null and messageInfo.userId != ''">
+            AND user_info.user_id = #{messageInfo.userId}
+        </if>
         order by message_info.create_date desc
     </select>
 </mapper>
