@@ -1,4 +1,4 @@
-### 基于SpringBoot + Vue的智能家居平台.
+### 基于SpringBoot + Vue的智能家居平台
 
 #### 安装环境
 
