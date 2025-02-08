@@ -156,12 +156,20 @@ public class LoginController {
         this.kickout(id);
     }
 
-    @PostMapping("regist")
+    @PostMapping("regist/user")
     public void regist(
             @NotBlank(message = "{required}") String username,
-            @NotBlank(message = "{required}") String password) throws Exception {
-        this.userService.regist(username, password);
+            @NotBlank(message = "{required}") String password, @NotBlank(message = "{required}") String name) throws Exception {
+        this.userService.regist(username, password, name);
     }
+
+//    @PostMapping("regist/user")
+//    public void regist(
+//            @NotBlank(message = "{required}") String username,
+//            @NotBlank(message = "{required}") String password, @NotBlank(message = "{required}") String name) throws Exception {
+//        this.userService.registUser(username, password, name);
+//    }
+
     private String saveTokenToRedis(User user, JWTToken token, HttpServletRequest request) throws Exception {
         String ip = IPUtil.getIpAddr(request);
 

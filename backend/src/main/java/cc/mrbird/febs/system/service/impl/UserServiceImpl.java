@@ -166,7 +166,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public void regist(String username, String password) throws Exception {
+    public void regist(String username, String password, String name) throws Exception {
         User user = new User();
         user.setPassword(MD5Util.encrypt(username, password));
         user.setUsername(username);
@@ -179,6 +179,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         UserInfo userInfo = new UserInfo();
         userInfo.setCode("UR-" + System.currentTimeMillis());
+        userInfo.setName(name);
         userInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
         userInfo.setUserId(Math.toIntExact(user.getUserId()));
         userInfoService.save(userInfo);

@@ -145,7 +145,7 @@ public class DeviceInfoController {
         // 所属用户
         UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, deviceInfo.getUserId()));
         if (userInfo != null) {
-            deviceInfo.setUserId(userInfo.getUserId());
+            deviceInfo.setUserId(userInfo.getId());
         }
         // 创建时间
         deviceInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
