@@ -9,6 +9,17 @@ minio:
   bucket: voice
 
 spring:
+  # mqtt配置
+  mqtt-toilet:
+    url: tcp://iot.xzhisoft.com:1883
+    clientId: xzht_mqtt_client
+    topics: xiot/csdn/wc/data
+    username: xiotinfohub
+    password: Xiot_202405_infohub
+    timeout: 10
+    keepAliveInterval: 20
+    defaultTopic: test
+
   mail:
     host: smtp.qq.com #发送邮件服务器
     username: 1258846421@qq.com #发送邮件的邮箱地址
