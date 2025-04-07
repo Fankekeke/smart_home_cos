@@ -196,6 +196,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    public void registUser(String username, String password, String name) throws Exception {
+
+    }
+
+    @Override
     @Transactional
     public void resetPassword(String[] usernames) throws Exception {
         for (String username : usernames) {

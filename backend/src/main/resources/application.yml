@@ -8,18 +8,18 @@ minio:
   secret-key: minioadmin
   bucket: voice
 
-spring:
   # mqtt配置
-  mqtt-toilet:
-    url: tcp://iot.xzhisoft.com:1883
-    clientId: xzht_mqtt_client
-    topics: xiot/csdn/wc/data
-    username: xiotinfohub
-    password: Xiot_202405_infohub
-    timeout: 10
-    keepAliveInterval: 20
-    defaultTopic: test
+mqtt-toilet:
+  url: tcp://broker.emqx.io:1883
+  clientId: mqttx_56af8cde
+  topics: xiot/data
+  username: test
+  password: test
+  timeout: 10
+  keepAliveInterval: 20
+  defaultTopic: test
 
+spring:
   mail:
     host: smtp.qq.com #发送邮件服务器
     username: 1258846421@qq.com #发送邮件的邮箱地址
@@ -65,7 +65,7 @@ spring:
           username: root
           password: 123456
           driver-class-name: com.mysql.cj.jdbc.Driver
-          url: jdbc:mysql://127.0.0.1:3306/smart_home_cos?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
+          url: jdbc:mysql://127.0.0.1:3307/smart_home_cos?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
         # 数据源-2，名称为 test
   #        test:
   #          username: root

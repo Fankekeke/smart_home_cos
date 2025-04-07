@@ -9,6 +9,7 @@ import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -99,10 +101,40 @@ public class DeviceTypeServiceImpl extends ServiceImpl<DeviceTypeMapper, DeviceT
         return result;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void setDeviceRecordMqtt(String message) {
+        DeviceHistoryInfo historyInfo = JSONUtil.toBean(message, DeviceHistoryInfo.class);
+        if (historyInfo == null) {
+            return;
+        }
+
+        // 获取此设备信息
+        DeviceInfo deviceInfo = deviceInfoService.getById(historyInfo.getDeviceId());
+        // 获取设备报警值
+        DeviceAlertInfo alert = deviceAlertInfoService.getOne(Wrappers.<DeviceAlertInfo>lambdaQuery().eq(DeviceAlertInfo::getDeviceId, historyInfo.getDeviceId()).eq(DeviceAlertInfo::getType, "2"));
+
+        deviceInfo.setDeviceValue(historyInfo.getDeviceValue());
+        if (alert != null) {
+            historyInfo.setAlertValue(String.valueOf(alert.getScore()));
+            if (Integer.parseInt(historyInfo.getDeviceValue()) >= alert.getScore()) {
+                // 添加报警消息
+                MessageInfo messageInfo = new MessageInfo();
+                messageInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
+                messageInfo.setSendUser(deviceInfo.getUserId());
+                messageInfo.setContent("你好，您的设备 " + deviceInfo.getName() + " 触发自定义报警，报警值为" + historyInfo.getDeviceValue() +"，请尽快查看处理");
+                messageInfo.setReadStatus(0);
+                messageInfoService.save(messageInfo);
+            }
+        }
+        deviceHistoryInfoService.save(historyInfo);
+        deviceInfoService.updateById(deviceInfo);
+    }
+
     /**
      * 定时任务设置设备上报数据
      */
-    @Scheduled(fixedRate = 300000)
+//    @Scheduled(fixedRate = 300000)
     public void setDeviceRecord() {
         // 获取设备信息
         List<DeviceInfo> deviceInfoList = deviceInfoService.list();

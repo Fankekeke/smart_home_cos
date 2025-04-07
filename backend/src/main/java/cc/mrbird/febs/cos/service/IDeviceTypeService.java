@@ -30,4 +30,11 @@ public interface IDeviceTypeService extends IService<DeviceType> {
      * @return 结果
      */
     LinkedHashMap<String, Object> homeData();
+
+    /**
+     * mqtt数据解析
+     *
+     * @param message 消息内容
+     */
+    void setDeviceRecordMqtt(String message);
 }
