@@ -75,4 +75,10 @@ public class DeviceHistoryInfo implements Serializable {
 
     @TableField(exist = false)
     private Integer userId;
+
+    @TableField(exist = false)
+    private String valueType;
+
+    @TableField(exist = false)
+    private Integer eventId;
 }

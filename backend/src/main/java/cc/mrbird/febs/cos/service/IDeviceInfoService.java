@@ -23,4 +23,11 @@ public interface IDeviceInfoService extends IService<DeviceInfo> {
      * @return 结果
      */
     IPage<LinkedHashMap<String, Object>> selectDevicePage(Page<DeviceInfo> page, DeviceInfo deviceInfo);
+
+    /**
+     * 场景事件处理
+     *
+     * @param eventId 事件ID
+     */
+    void eventCheck(Integer eventId);
 }

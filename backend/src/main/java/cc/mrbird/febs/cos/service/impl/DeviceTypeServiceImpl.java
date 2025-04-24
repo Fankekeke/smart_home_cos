@@ -109,26 +109,30 @@ public class DeviceTypeServiceImpl extends ServiceImpl<DeviceTypeMapper, DeviceT
             return;
         }
 
-        // 获取此设备信息
-        DeviceInfo deviceInfo = deviceInfoService.getById(historyInfo.getDeviceId());
-        // 获取设备报警值
-        DeviceAlertInfo alert = deviceAlertInfoService.getOne(Wrappers.<DeviceAlertInfo>lambdaQuery().eq(DeviceAlertInfo::getDeviceId, historyInfo.getDeviceId()).eq(DeviceAlertInfo::getType, "2"));
+        if (StrUtil.isNotEmpty(historyInfo.getValueType()) && "event".equals(historyInfo.getValueType())) {
+            deviceInfoService.eventCheck(historyInfo.getEventId());
+        } else {
+            // 获取此设备信息
+            DeviceInfo deviceInfo = deviceInfoService.getById(historyInfo.getDeviceId());
+            // 获取设备报警值
+            DeviceAlertInfo alert = deviceAlertInfoService.getOne(Wrappers.<DeviceAlertInfo>lambdaQuery().eq(DeviceAlertInfo::getDeviceId, historyInfo.getDeviceId()).eq(DeviceAlertInfo::getType, "2"));
 
-        deviceInfo.setDeviceValue(historyInfo.getDeviceValue());
-        if (alert != null) {
-            historyInfo.setAlertValue(String.valueOf(alert.getScore()));
-            if (Integer.parseInt(historyInfo.getDeviceValue()) >= alert.getScore()) {
-                // 添加报警消息
-                MessageInfo messageInfo = new MessageInfo();
-                messageInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
-                messageInfo.setSendUser(deviceInfo.getUserId());
-                messageInfo.setContent("你好，您的设备 " + deviceInfo.getName() + " 触发自定义报警，报警值为" + historyInfo.getDeviceValue() +"，请尽快查看处理");
-                messageInfo.setReadStatus(0);
-                messageInfoService.save(messageInfo);
+            deviceInfo.setDeviceValue(historyInfo.getDeviceValue());
+            if (alert != null) {
+                historyInfo.setAlertValue(String.valueOf(alert.getScore()));
+                if (Integer.parseInt(historyInfo.getDeviceValue()) >= alert.getScore()) {
+                    // 添加报警消息
+                    MessageInfo messageInfo = new MessageInfo();
+                    messageInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
+                    messageInfo.setSendUser(deviceInfo.getUserId());
+                    messageInfo.setContent("你好，您的设备 " + deviceInfo.getName() + " 触发自定义报警，报警值为" + historyInfo.getDeviceValue() +"，请尽快查看处理");
+                    messageInfo.setReadStatus(0);
+                    messageInfoService.save(messageInfo);
+                }
             }
+            deviceHistoryInfoService.save(historyInfo);
+            deviceInfoService.updateById(deviceInfo);
         }
-        deviceHistoryInfoService.save(historyInfo);
-        deviceInfoService.updateById(deviceInfo);
     }
 
     /**

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.cos.dao.EventInfoMapper">
+
+    <!-- 分页获取场景事件信息 -->
+    <select id="queryEventPage" resultType="java.util.LinkedHashMap">
+        SELECT
+        ei.id,
+        ei.CODE,
+        ei.NAME,
+        ei.user_id,
+        ei.content,
+        ei.create_date,
+        ui.NAME AS userName,
+        ui.images AS userImages,
+        count(ed.id)
+        FROM
+        event_info ei
+        LEFT JOIN user_info ui ON (ui.id = ei.user_id)
+        LEFT JOIN event_detail ed ON (ed.event_id = ei.id)
+        WHERE
+        1 = 1
+        <if test="eventInfo.name != null and eventInfo.name != ''">
+            AND ei.name LIKE CONCAT('%',#{eventInfo.name},'%')
+        </if>
+        <if test="eventInfo.userName != null and eventInfo.userName != ''">
+            AND ui.name LIKE CONCAT('%',#{eventInfo.userName},'%')
+        </if>
+        GROUP BY
+        ed.event_id
+        ORDER BY
+        ei.create_date DESC
+    </select>
+
+    <!-- 获取事件详情 -->
+    <select id="queryEventDetail" resultType="java.util.LinkedHashMap">
+        SELECT
+        ed.id,
+        ed.device_id,
+        ed.open_flag,
+        ed.event_id,
+        di.NAME AS deviceName,
+        di.remark,
+        dt.NAME AS typeName,
+        dt.images
+        FROM
+        event_detail ed
+        LEFT JOIN device_info di ON (di.id = ed.device_id)
+        LEFT JOIN device_type ON (device_type.id = device_info.type_id)
+        WHERE
+        1 = 1
+        <if test="eventId != null">
+            AND ed.event_id = #{eventId}
+        </if>
+    </select>
+</mapper>

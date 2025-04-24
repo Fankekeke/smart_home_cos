@@ -90,6 +90,18 @@ public class DeviceInfoController {
     }
 
     /**
+     * 场景事件处理
+     *
+     * @param eventId 事件ID
+     * @return 结果
+     */
+    @GetMapping("/eventCheck")
+    public R eventCheck(Integer eventId) {
+        deviceInfoService.eventCheck(eventId);
+        return R.ok(true);
+    }
+
+    /**
      * 设备开关状态手动设置
      *
      * @param deviceId 设备ID

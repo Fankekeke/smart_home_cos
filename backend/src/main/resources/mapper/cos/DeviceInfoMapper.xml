@@ -15,6 +15,7 @@
         di.open_flag,
         di.device_value,
         di.remark,
+        di.address,
         dt.name as typeName,
         dt.images,
         ui.name as userName,
