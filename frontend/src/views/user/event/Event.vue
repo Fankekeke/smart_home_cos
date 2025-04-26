@@ -76,8 +76,8 @@
 
 <script>
 import RangeDate from '@/components/datetime/RangeDate'
-import deviceAdd from './DeviceAdd.vue'
-import deviceEdit from './DeviceEdit.vue'
+import deviceAdd from './EventAdd.vue'
+import deviceEdit from './EventEdit.vue'
 import {mapState} from 'vuex'
 import moment from 'moment'
 moment.locale('zh-cn')

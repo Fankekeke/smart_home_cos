@@ -123,7 +123,7 @@ export default {
       typeList: []
     }
   },
-  mounted() {
+  mounted () {
     this.selectTypeList()
     this.queryDeviceList()
   },
@@ -176,9 +176,17 @@ export default {
       this.$emit('close')
     },
     handleSubmit () {
+      if (this.dataList.length === 0) {
+        this.$message.error('请添加设备信息')
+        return false
+      }
       this.form.validateFields((err, values) => {
         values.userId = this.currentUser.userId
-        values.eventDetail = this.dataList
+        this.dataList.forEach((e, index) => {
+          e.openFlag = e.openFlag ? 1 : 0
+        })
+        values.eventDetail = JSON.stringify(this.dataList)
+        console.log(values)
         if (!err) {
           this.loading = true
           this.$post('/cos/event-info', {

@@ -18,46 +18,40 @@
             ]"/>
           </a-form-item>
         </a-col>
-        <a-col :span="12">
-          <a-form-item label='场景事件上下线' v-bind="formItemLayout">
-            <a-radio-group button-style="solid" default-value="1"
-                           v-decorator="[
-                'onlineFlag',
-                {rules: [{ required: true, message: '请选择场景事件上下线' }]}
-              ]">
-              <a-radio-button value="0">否</a-radio-button>
-              <a-radio-button value="1">是</a-radio-button>
-            </a-radio-group>
-          </a-form-item>
-        </a-col>
-        <a-col :span="12">
-          <a-form-item label='场景事件类型' v-bind="formItemLayout">
-            <a-select v-decorator="[
-                  'typeId',
-                  { rules: [{ required: true, message: '请输入类型!' }] }
-                  ]">
-              <a-select-option :value="item.id" v-for="(item, index) in typeList" :key="index">{{ item.name }}</a-select-option>
-            </a-select>
-          </a-form-item>
-        </a-col>
-        <a-col :span="12">
-          <a-form-item label='场景事件开关状态' v-bind="formItemLayout">
-            <a-radio-group button-style="solid" default-value="1"
-                           v-decorator="[
-                'openFlag',
-                {rules: [{ required: true, message: '请选择场景事件开关状态' }]}
-              ]">
-              <a-radio-button value="0">关闭</a-radio-button>
-              <a-radio-button value="1">开启</a-radio-button>
-            </a-radio-group>
-          </a-form-item>
-        </a-col>
         <a-col :span="24">
-          <a-form-item label='备注' v-bind="formItemLayout">
+          <a-form-item label='场景内容备注' v-bind="formItemLayout">
             <a-textarea :rows="6" v-decorator="[
-            'remark'
+            'content'
             ]"/>
           </a-form-item>
+        </a-col>
+      </a-row>
+      <a-row :gutter="10">
+        <a-divider orientation="left">
+          <span style="font-size: 13px">设备信息</span>
+        </a-divider>
+        <a-col :span="24">
+          <a-table :columns="columns" :data-source="dataList" :pagination="false">
+            <template slot="nameShow" slot-scope="text, record">
+              <a-select style="width: 100%" :value="record.deviceId" @change="handleChange($event, record)">
+                <a-select-option v-for="(item, index) in deviceList" :key="index" :value="item.id">{{ item.name }}</a-select-option>
+              </a-select>
+            </template>
+            <template slot="addressShow" slot-scope="text, record">
+              <span>{{ record.address }}</span>
+            </template>
+            <template slot="typeIdShow" slot-scope="text, record">
+              <a-select disabled v-model="record.typeId">
+                <a-select-option :value="item.id" v-for="(item, index) in typeList" :key="index">{{ item.name }}</a-select-option>
+              </a-select>
+            </template>
+            <template slot="openFlagShow" slot-scope="text, record">
+              <a-switch v-model="record.openFlag" checked-children="开" un-checked-children="关"/>
+            </template>
+          </a-table>
+          <a-button @click="dataAdd" type="primary" ghost style="margin-top: 10px;width: 100%">
+            添加设备事件
+          </a-button>
         </a-col>
       </a-row>
     </a-form>
@@ -95,6 +89,25 @@ export default {
       },
       set: function () {
       }
+    },
+    columns () {
+      return [{
+        title: '设备名称',
+        dataIndex: 'name',
+        scopedSlots: {customRender: 'nameShow'}
+      }, {
+        title: '设备位置',
+        dataIndex: 'address',
+        scopedSlots: {customRender: 'addressShow'}
+      }, {
+        title: '设备类型',
+        dataIndex: 'typeId',
+        scopedSlots: {customRender: 'typeIdShow'}
+      }, {
+        title: '设置开关',
+        dataIndex: 'openFlag',
+        scopedSlots: {customRender: 'openFlagShow'}
+      }]
     }
   },
   data () {
@@ -106,13 +119,47 @@ export default {
       fileList: [],
       previewVisible: false,
       previewImage: '',
-      typeList: []
+      typeList: [],
+      dataList: [],
+      deviceList: []
     }
   },
-  mounted() {
+  mounted () {
     this.selectTypeList()
+    this.queryDeviceList()
   },
   methods: {
+    queryEventDetail (id) {
+      this.$get('/cos/event-info/queryEventDetail', {
+        eventId: id
+      }).then((r) => {
+        r.data.data.forEach((e, index) => {
+          e.openFlag = e.openFlag == 1 ? true : false
+        })
+        this.dataList = r.data.data
+      })
+    },
+    queryDeviceList () {
+      this.$get('/cos/device-info/selectDeviceByUserId', {userId: this.currentUser.userId}).then((r) => {
+        this.deviceList = r.data.data
+      })
+    },
+    handleChange (value, record) {
+      if (value) {
+        this.deviceList.forEach(e => {
+          if (e.id === value) {
+            record.openFlag = 0
+            record.typeId = e.typeId
+            record.address = e.address
+            record.deviceId = e.id
+            console.log(record)
+          }
+        })
+      }
+    },
+    dataAdd () {
+      this.dataList.push({deviceId: null, address: '', typeId: null, openFlag: true})
+    },
     selectTypeList () {
       this.$get('/cos/device-type/list').then((r) => {
         this.typeList = r.data.data
@@ -142,7 +189,8 @@ export default {
     },
     setFormValues ({...device}) {
       this.rowId = device.id
-      let fields = ['name', 'model', 'typeId', 'onlineFlag', 'openFlag', 'remark']
+      this.queryEventDetail(device.id)
+      let fields = ['name', 'model', 'typeId', 'onlineFlag', 'openFlag', 'content']
       let obj = {}
       Object.keys(device).forEach((key) => {
         if (key === 'images') {
@@ -165,18 +213,16 @@ export default {
       this.$emit('close')
     },
     handleSubmit () {
-      // 获取图片List
-      let images = []
-      this.fileList.forEach(image => {
-        if (image.response !== undefined) {
-          images.push(image.response)
-        } else {
-          images.push(image.name)
-        }
-      })
+      if (this.dataList.length === 0) {
+        this.$message.error('请添加设备信息')
+        return false
+      }
       this.form.validateFields((err, values) => {
+        this.dataList.forEach((e, index) => {
+          e.openFlag = e.openFlag ? 1 : 0
+        })
+        values.eventDetail = JSON.stringify(this.dataList)
         values.id = this.rowId
-        values.images = images.length > 0 ? images.join(',') : null
         if (!err) {
           this.loading = true
           this.$put('/cos/event-info', {

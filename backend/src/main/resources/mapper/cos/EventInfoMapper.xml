@@ -36,17 +36,19 @@
     <select id="queryEventDetail" resultType="java.util.LinkedHashMap">
         SELECT
         ed.id,
-        ed.device_id,
+        ed.device_id AS deviceId,
         ed.open_flag,
         ed.event_id,
-        di.NAME AS deviceName,
+        di.NAME AS name,
+        di.address,
         di.remark,
+        dt.id as typeId,
         dt.NAME AS typeName,
         dt.images
         FROM
         event_detail ed
         LEFT JOIN device_info di ON (di.id = ed.device_id)
-        LEFT JOIN device_type ON (device_type.id = device_info.type_id)
+        LEFT JOIN device_type dt ON (dt.id = di.type_id)
         WHERE
         1 = 1
         <if test="eventId != null">

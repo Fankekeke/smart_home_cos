@@ -52,6 +52,14 @@
             </a-radio-group>
           </a-form-item>
         </a-col>
+        <a-col :span="12">
+          <a-form-item label='设备位置' v-bind="formItemLayout">
+            <a-input v-decorator="[
+            'address',
+            { rules: [{ required: true, message: '请输入设备位置!' }] }
+            ]"/>
+          </a-form-item>
+        </a-col>
         <a-col :span="24">
           <a-form-item label='备注' v-bind="formItemLayout">
             <a-textarea :rows="6" v-decorator="[
