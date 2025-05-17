@@ -31,7 +31,7 @@
     </div>
     <div>
       <div class="operator">
-        <a-button type="primary" ghost @click="add">新增</a-button>
+<!--        <a-button type="primary" ghost @click="add">新增</a-button>-->
         <a-button @click="batchDelete">删除</a-button>
       </div>
       <!-- 表格区域 -->
@@ -56,7 +56,6 @@
         </template>
         <template slot="operation" slot-scope="text, record">
           <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>
-          <a-icon type="tool" theme="twoTone" twoToneColor="#4a9ff5" @click="tool(record)" title="触 发" style="margin-left: 15px"></a-icon>
         </template>
       </a-table>
     </div>
@@ -220,12 +219,6 @@ export default {
       this.$refs.deviceEdit.setFormValues(record)
       this.deviceEdit.visiable = true
     },
-    tool (record) {
-      this.$get('/cos/event-info/eventCheck', {eventId: record.id}).then((r) => {
-        this.$message.success('场景事件触发成功')
-        this.search()
-      })
-    },
     handledeviceEditClose () {
       this.deviceEdit.visiable = false
     },
@@ -319,7 +312,6 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
-      params.userId = this.currentUser.userId
       this.$get('/cos/event-info/page', {
         ...params
       }).then((r) => {

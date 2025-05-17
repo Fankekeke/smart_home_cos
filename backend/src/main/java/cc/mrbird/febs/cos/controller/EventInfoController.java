@@ -6,6 +6,7 @@ import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.EventDetail;
 import cc.mrbird.febs.cos.entity.EventInfo;
 import cc.mrbird.febs.cos.entity.UserInfo;
+import cc.mrbird.febs.cos.service.IDeviceInfoService;
 import cc.mrbird.febs.cos.service.IEventDetailService;
 import cc.mrbird.febs.cos.service.IEventInfoService;
 import cc.mrbird.febs.cos.service.IUserInfoService;
@@ -38,6 +39,8 @@ public class EventInfoController {
 
     private final IUserInfoService userInfoService;
 
+    private final IDeviceInfoService deviceInfoService;
+
     /**
      * 分页获取场景事件信息
      *
@@ -48,6 +51,18 @@ public class EventInfoController {
     @GetMapping("/page")
     public R page(Page<EventInfo> page, EventInfo eventInfo) {
         return R.ok(eventInfoService.queryEventPage(page, eventInfo));
+    }
+
+    /**
+     * 场景事件信息
+     *
+     * @param eventId 事件ID
+     * @return 结果
+     */
+    @GetMapping("/eventCheck")
+    public R eventCheck(Integer eventId) {
+        deviceInfoService.eventCheck(eventId);
+        return R.ok(true);
     }
 
     /**

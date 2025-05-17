@@ -13,7 +13,8 @@
         ei.create_date,
         ui.NAME AS userName,
         ui.images AS userImages,
-        count(ed.id)
+        ui.user_id as sysUserId,
+        count(ed.id) as deviceNum
         FROM
         event_info ei
         LEFT JOIN user_info ui ON (ui.id = ei.user_id)
@@ -25,6 +26,9 @@
         </if>
         <if test="eventInfo.userName != null and eventInfo.userName != ''">
             AND ui.name LIKE CONCAT('%',#{eventInfo.userName},'%')
+        </if>
+        <if test="eventInfo.userId != null and eventInfo.userId != ''">
+            AND ei.user_id = #{eventInfo.userId}
         </if>
         GROUP BY
         ed.event_id

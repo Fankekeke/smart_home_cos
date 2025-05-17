@@ -123,7 +123,7 @@ export default {
         tooltip: {
           y: {
             formatter: function (val) {
-              return val + ' 条'
+              return '设备值：' + val
             }
           }
         }
