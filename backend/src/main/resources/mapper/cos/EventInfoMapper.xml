@@ -28,7 +28,7 @@
             AND ui.name LIKE CONCAT('%',#{eventInfo.userName},'%')
         </if>
         <if test="eventInfo.userId != null and eventInfo.userId != ''">
-            AND ei.user_id = #{eventInfo.userId}
+            AND ui.user_id = #{eventInfo.userId}
         </if>
         GROUP BY
         ed.event_id
