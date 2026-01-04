@@ -1,6 +1,12 @@
-<p><img align="center" src="https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/%E5%90%88%E4%BD%9C%E7%89%A9%E6%96%99%E6%A0%B7%E5%BC%8F%20(3).png" alt="fankekeke" /></p>
-
 ### 基于SpringBoot + Vue的智能家居平台
+
+智能家居系统、全屋智能控制、IoT家居平台、智能 lighting/安防/家电
+
+##### 管理员：
+公告管理、用户管理、设备管理、设备类型、事件记录、操作记录、设备在线统计、设备在线记录，数据统计
+
+##### 用户：
+用户信息管理，设备管理，设备在线统计，事件记录，操作记录，设备在线记录
 
 #### 安装环境
 
@@ -28,12 +34,6 @@ WebStorm OR VScode 编译器 [https://www.jianshu.com/p/d63b5bae9dff]
 平台后台：springboot(框架) + redis(缓存中间件) + shiro(权限中间件) + mybatisplus(orm) + restful风格接口 + mysql(数据库)
 
 开发环境：windows10 or windows7 ， vscode or webstorm ， idea + lambok
-
-##### 管理员：
-公告管理、用户管理、设备管理、设备类型、事件记录、操作记录、设备在线统计、设备在线记录，数据统计
-
-##### 用户：
-用户信息管理，设备管理，设备在线统计，事件记录，操作记录，设备在线记录
 
 #### 前台启动方式
 安装所需文件 yarn install 
@@ -102,3 +102,5 @@ WeChat: `Storm_Berserker`
 `网站建设、小程序、H5、APP、各种系统 选题+开题报告+任务书+程序定制+安装调试+项目讲解+论文+答辩PPT`
 
 More info: [悲伤的橘子树](https://berserker287.github.io/)
+
+<p><img align="center" src="https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/%E5%90%88%E4%BD%9C%E7%89%A9%E6%96%99%E6%A0%B7%E5%BC%8F%20(3).png" alt="fankekeke" /></p>
