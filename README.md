@@ -1,14 +1,17 @@
-### 基于SpringBoot + Vue + MQTT的智能家居平台
+![](https://img.shields.io/badge/License-MIT-blue.svg)
 
-智能家居系统、全屋智能控制、IoT家居平台
+![](https://img.shields.io/badge/Version-1.0.0-brightgreen.svg)
 
-##### 管理员：
-公告管理、用户管理、设备管理、设备类型、事件记录、操作记录、设备在线统计、设备在线记录，数据统计
+![](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
-##### 用户：
-用户信息管理，设备管理，设备在线统计，事件记录，操作记录，设备在线记录
+# 基于 SpringBoot + Vue  + MQTT 的智能家居平台
+
+Web 管理后台 · 用户端 App/小程序 · MQTT 设备接入 | 设备管控 · 事件告警 · 在线统计 · 操作审计 · 数据可视化
+
+本项目是一套基于 **MQTT 协议** 的智能家居管理平台，采用前后端分离架构，覆盖 **管理员（平台运营）** 与 **普通用户（家庭用户）** 两类角色。系统围绕"设备接入 → MQTT 消息通信 → 状态监控 → 事件告警 → 操作审计 → 数据统计"的核心链路设计，支持多类型智能设备统一纳管、实时状态监控、远程控制、事件记录追溯、在线统计可视化等功能，适用于智能家居、智慧办公、智慧社区等物联网场景。
 
 #### 安装环境
+️**注意**：请确保您的开发环境已安装以下依赖。
 
 JAVA 环境 
 
@@ -16,24 +19,111 @@ Node.js环境 [https://nodejs.org/en/] 选择14.17
 
 Yarn 打开cmd， 输入npm install -g yarn !!!必须安装完毕nodejs
 
-Mysql 数据库 [https://blog.csdn.net/qq_40303031/article/details/88935262] 一定要把账户和密码记住
+Mysql 数据库 一定要把账户和密码记住
 
 redis
 
-Idea 编译器 [https://blog.csdn.net/weixin_44505194/article/details/104452880]
+Idea 编译器
 
-WebStorm OR VScode 编译器 [https://www.jianshu.com/p/d63b5bae9dff]
+WebStorm OR VScode 编译器
 
 #### 采用技术及功能
 
 后端：SpringBoot、MybatisPlus、MySQL、Redis、
 前端：Vue、Apex、Antd、Axios
 
-平台前端：vue(框架) + vuex(全局缓存) + rue-router(路由) + axios(请求插件) + apex(图表)  + antd-ui(ui组件)
+平台前端：vue(框架) + vuex(全局缓存) + rue-router(路由) + axios(请求插件) + apex(图表)  + antd-ui(ui组件) + 百度地图 API
 
 平台后台：springboot(框架) + redis(缓存中间件) + shiro(权限中间件) + mybatisplus(orm) + restful风格接口 + mysql(数据库)
 
 开发环境：windows10 or windows7 ， vscode or webstorm ， idea + lambok
+
+---
+
+## 核心特性
+
+- **MQTT 消息中枢**：采用 EMQX / Mosquitto 作为 MQTT Broker，设备通过发布/订阅模式上报状态、接收指令，支持 QoS 0/1/2 分级保障、遗嘱消息（Last Will）、会话保持，实现低延迟、高并发的设备通信。
+- **双角色权限体系**：管理员端负责全局设备类型管理、用户管理、公告发布与全平台数据统计；用户端仅管理自有设备、查看个人事件与操作记录，权限隔离清晰。
+- **实时在线统计**：基于 MQTT 上下线事件与 Redis 缓存，实时统计设备在线数量、在线率趋势、各设备类型在线分布，支持历史在线记录回溯。
+- **事件与操作双审计**：事件记录捕获设备主动上报的异常/告警（如烟雾报警、门磁触发、温度超限）；操作记录留存所有用户控制指令（如开灯、调温），满足审计追溯需求。
+---
+
+## 适用场景
+
+- 智能家居设备统一管控平台
+- 智慧办公/智慧社区物联网管理
+- 多品牌异构设备接入与监控
+- 家庭安防告警与事件追溯
+- 设备运维与在线率监控
+---
+
+## 功能模块概览
+
+## 管理员端
+
+管理员为平台运营中枢，负责全局管控：
+
+### 用户与公告
+
+- **用户管理**：管理注册用户，包括用户ID、昵称、手机号、头像、注册时间、账户状态、绑定设备数量，支持用户查询、封禁/解封、密码重置。
+- **公告管理**：发布与管理平台公告，包括公告标题、内容、类型（系统通知/维护公告/安全提醒/新功能上线）、发布时间、置顶状态、生效范围，支持公告编辑、删除与推送。
+
+### 设备与类型
+
+- **设备管理**：管理全平台设备，包括设备ID、设备名称、所属用户、设备类型、在线状态、最后上线时间、固件版本、MQTT ClientID，支持设备查询、解绑、禁用、远程重启。
+- **设备类型**：管理设备类型字典，包括类型ID、类型名称（如智能灯、温湿度传感器、门窗磁、烟雾报警器、智能插座、空调控制器）、物模型配置（属性/事件/服务定义）、图标、排序号，支持类型增删改查与物模型配置。
+
+### 事件与操作
+
+- **事件记录**：查看全平台设备事件，包括事件ID、设备名称、事件类型（告警/状态变更/触发）、事件内容、事件级别（提示/警告/严重）、发生时间、处理状态，支持事件筛选、标记已处理、批量导出。
+- **操作记录**：查看全平台操作日志，包括操作ID、操作人（管理员/用户）、操作类型（远程控制/设备绑定/参数修改）、操作对象、操作结果、操作时间、IP地址，支持操作追溯与审计。
+
+### 在线统计与数据
+
+- **设备在线统计**：实时展示全平台设备在线数量、离线数量、在线率，支持按设备类型、时间段统计在线趋势，提供折线图/饼图可视化。
+- **设备在线记录**：查看设备上下线历史记录，包括设备名称、上线时间、下线时间、在线时长、下线原因（正常离线/异常断开），支持按设备/时间段查询。
+- **数据统计**：综合数据看板，展示核心指标（设备总量/今日在线率/今日事件数/今日操作数/用户总数/设备类型分布），支持设备增长趋势、事件类型分布、操作频次排行、用户设备绑定排行等多维度图表。
+
+## 用户端
+
+普通用户通过 Web / App / 小程序管理自有智能家居设备：
+
+### 账户与设备
+
+- **用户信息管理**：查看与编辑个人基本信息，包括昵称、手机号、头像、密码修改、安全设置（登录密码/MQTT 接入密钥）。
+- **设备管理**：管理个人绑定的智能设备，包括设备列表、设备名称、设备类型、在线状态、实时状态数据（如温度值、开关状态），支持设备添加（扫码/手动录入 MQTT 信息）、解绑、远程控制（开/关、参数调节）、设备详情查看。
+
+### 统计与记录
+
+- **设备在线统计**：查看个人设备在线情况，包括当前在线设备数、离线设备数、各设备在线率，支持按时间段查看在线趋势。
+- **设备在线记录**：查看个人设备的上下线历史，包括设备名称、上线时间、下线时间、在线时长，支持按设备筛选。
+- **事件记录**：查看个人设备的告警与事件，包括事件类型、事件内容、发生时间、处理状态，支持事件标记已读/已处理、告警通知设置。
+- **操作记录**：查看个人对设备的操作历史，包括操作类型、操作对象、操作结果、操作时间，支持操作追溯。
+---
+
+## 项目结构
+
+```text
+pharmacy-dispensing-system/
+├── backend/            # 后端 API 服务
+│   ├── src/
+│   │   ├── controllers/  # 控制器
+│   │   ├── models/       # 数据模型
+│   │   ├── routes/       # 路由
+│   │   └── services/     # 业务逻辑
+│   └── package.json
+├── frontend/           # 前端 Web 应用
+│   ├── src/
+│   │   ├── views/      # 页面视图
+│   │   ├── components/ # 公共组件
+│   │   └── store/      # 状态管理
+│   └── package.json
+├── docs/               # 项目文档与 API 接口说明
+├── LICENSE
+└── README.md
+```
+---
+
 
 #### 前台启动方式
 安装所需文件 yarn install 
@@ -42,26 +132,24 @@ WebStorm OR VScode 编译器 [https://www.jianshu.com/p/d63b5bae9dff]
 #### 默认后台账户密码
 [管理员]
 admin
-1234qwer
+123456
 
 [用户]
 fank
-1234qwer
-#### 项目截图
+123456
 
+#### 项目截图
 |  |  |
 |---------------------|---------------------|
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1728479541679.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1728479646902.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1728479748539.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1728479634810.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1728479726722.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1728479624817.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1728479714724.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1728479616044.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1728479704571.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1728479605407.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1728479693293.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1728479596112.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1728479679524.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1728479583620.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1728479669347.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1728479572133.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1728479656470.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/1728479560350.png) |
-| ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/work/936e9baf53eb9a217af4f89c616dc19.png) |
-
+| ![](./assets/image%20(1).png) | ![](./assets/image%20(2).png) |
+| ![](./assets/image%20(3).png) | ![](./assets/image%20(4).png) |
+| ![](./assets/image%20(5).png) | ![](./assets/image%20(6).png) |
+| ![](./assets/image%20(7).png) | ![](./assets/image%20(8).png) |
+| ![](./assets/image%20(9).png) | ![](./assets/image%20(10).png) |
+| ![](./assets/image%20(11).png) | ![](./assets/image%20(12).png) |
+| ![](./assets/image%20(13).png) | ![](./assets/image%20(14).png) |
+| ![](./assets/image%20(15).png) | ![](./assets/image%20(16).png) |
+| ![](./assets/image%20(17).png) | ![](./assets/image%20(18).png) |
 
 #### 演示视频
 
@@ -79,7 +167,10 @@ WeChat: `Storm_Berserker`
 
 > 项目部署调试不好包退！功能逻辑没讲明白包退！
 
+<div align=center><img align="center" src="./assets/product_word.png" alt="fankekeke" /></div>
+
 #### 其它资源
+[2026年-答辩顺利通过-客户评价🀄](https://berserker287.github.io/2026/06/29/2026%E5%B9%B4%E7%AD%94%E8%BE%A9%E9%A1%BA%E5%88%A9%E9%80%9A%E8%BF%87/)
 
 [2025年-答辩顺利通过-客户评价🍜](https://berserker287.github.io/2025/06/18/2025%E5%B9%B4%E7%AD%94%E8%BE%A9%E9%A1%BA%E5%88%A9%E9%80%9A%E8%BF%87/)
 
@@ -103,4 +194,8 @@ WeChat: `Storm_Berserker`
 
 More info: [悲伤的橘子树](https://berserker287.github.io/)
 
-<p><img align="center" src="https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/%E5%90%88%E4%BD%9C%E7%89%A9%E6%96%99%E6%A0%B7%E5%BC%8F%20(3).png" alt="fankekeke" /></p>
+<div align="center"><img align="center" src="./assets/chat_qr_code.png" alt="fankekeke" width=250 /></div>
+
+<p><img align="center" src="./assets/wechat_group.png" alt="fankekeke" /></p>
+
+**感谢查看**
